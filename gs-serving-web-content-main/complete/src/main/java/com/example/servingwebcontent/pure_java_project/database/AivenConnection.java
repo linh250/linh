@@ -1,43 +1,42 @@
 package com.example.servingwebcontent.pure_java_project.database;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
-/** Kết nối MySQL Aiven và in dữ liệu bảng sach. */
-@Component
 public class AivenConnection {
 
-    // Lấy cấu hình từ application.properties (hoặc biến môi trường)
-    @Value("${spring.datasource.url}")
-    private String jdbcUrl;
+    private final String jdbcUrl;
+    private final String jdbcUser;
+    private final String jdbcPass;
 
-    @Value("${spring.datasource.username}")
-    private String jdbcUser;
+    // Spring sẽ inject qua constructor
+    public AivenConnection(@Value("${DB_URL}")  String jdbcUrl,
+                           @Value("${DB_USER}") String jdbcUser,
+                           @Value("${DB_PASS}") String jdbcPass) {
+        this.jdbcUrl  = jdbcUrl;
+        this.jdbcUser = jdbcUser;
+        this.jdbcPass = jdbcPass;
+    }
 
-    @Value("${aiven.db.password}")
-    private String jdbcPass;
-
-    /** Kết nối DB, đọc bảng sach và in ra console. */
+    @PostConstruct
     public void testConnection() {
+        String sql = "SELECT NOW() AS server_time";
         try (Connection conn = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPass);
-             Statement stmt = conn.createStatement();
-             ResultSet rs   = stmt.executeQuery("SELECT * FROM sach")) {
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
 
-            System.out.println("===> Dữ liệu bảng sach:");
-            while (rs.next()) {
-                int     id     = rs.getInt("id");
-                String  ten    = rs.getString("ten_sach");
-                String  tacGia = rs.getString("tac_gia");
-                boolean daMuon = rs.getBoolean("da_muon");
-                System.out.printf("%d | %s | %s | %s%n",
-                        id, ten, tacGia, daMuon ? "Đã mượn" : "Chưa mượn");
+            if (rs.next()) {
+                System.out.println("✅ Kết nối Aiven thành công – Server time: "
+                                   + rs.getString("server_time"));
             }
         } catch (Exception e) {
-            System.err.println("❌ Lỗi kết nối hoặc truy vấn:");
+            System.err.println("❌ Lỗi kết nối Aiven:");
             e.printStackTrace();
         }
     }
 }
-
