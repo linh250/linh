@@ -25,14 +25,14 @@ public class SachController {
         List<Sach> danhSach = sachDb.layDanhSachSach();
         model.addAttribute("dsSach", danhSach);
         model.addAttribute("sachMoi", new Sach());
-        return "sach";
+        return "danh-sach"; // ✅ view trùng với file danh-sach.html
     }
 
     /** POST /sach/them – thêm sách mới */
     @PostMapping("/them")
     public String themSach(@ModelAttribute("sachMoi") Sach sach) {
         sachDb.themSach(sach);
-        return "redirect:/sach";
+        return "redirect:/sach"; // ✅ quay lại trang danh sách
     }
 
     /** GET /sach/xoa/{id} – xoá sách */
