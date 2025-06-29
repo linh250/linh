@@ -1,1 +1,20 @@
+
+
+cat <<EOF > .gitignore
+# Bỏ qua file cấu hình chứa mật khẩu
 .env
+
+# Bỏ thư mục biên dịch
+/target/
+
+# Bỏ file log
+*.log
+
+# Bỏ IDE files
+.idea/
+*.iml
+*.class
+
+# Bỏ các file hệ điều hành sinh ra
+.DS_Store
+Thumbs.db
