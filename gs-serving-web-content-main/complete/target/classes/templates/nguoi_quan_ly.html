@@ -49,8 +49,13 @@
                 <td th:text="${phieu.ngayMuon}">2025-01-01</td>
                 <td th:text="${phieu.ngayTra}">2025-01-10</td>
                 <td class="text-center">
-                    <span class="badge" th:classappend="${phieu.daTra} ? 'bg-success' : 'bg-danger'"
-                          th:text="${phieu.daTra ? 'Có' : 'Chưa'}">Chưa</span>
+                    <form th:action="@{/phieu-muon/cap-nhat-tra/{id}(id=${phieu.id})}" method="post">
+                        <button type="submit"
+                                class="btn btn-sm"
+                                th:classappend="${phieu.daTra} ? 'btn-success' : 'btn-danger'">
+                            <span th:text="${phieu.daTra ? 'Có' : 'Chưa'}">Chưa</span>
+                        </button>
+                    </form>
                 </td>
                 <td class="text-center">
                     <a th:href="@{/phieu-muon/sua/{id}(id=${phieu.id})}" class="btn btn-sm btn-warning">Sửa</a>

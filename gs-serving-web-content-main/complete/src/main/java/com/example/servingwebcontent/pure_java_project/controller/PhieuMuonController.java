@@ -18,7 +18,6 @@ public class PhieuMuonController {
     private final PhieuMuonDatabase database;
     private final SachDatabase sachDatabase;
 
-    // ✅ Inject thông qua constructor
     public PhieuMuonController(PhieuMuonDatabase database, SachDatabase sachDatabase) {
         this.database = database;
         this.sachDatabase = sachDatabase;
@@ -33,7 +32,6 @@ public class PhieuMuonController {
         List<Sach> danhSachChuaMuon = sachDatabase.laySachChuaMuon();
         model.addAttribute("danhSachChuaMuon", danhSachChuaMuon);
 
-        // ✅ Debug in ra số lượng sách
         System.out.println(">> Số sách chưa mượn: " + danhSachChuaMuon.size());
 
         return "tao_phieu_muon";
@@ -96,9 +94,20 @@ public class PhieuMuonController {
         return "redirect:/phieu-muon/quan-ly";
     }
 
+    @PostMapping("/cap-nhat-tra/{id}")
+    public String capNhatTrangThaiDaTra(@PathVariable int id) {
+        PhieuMuon phieu = database.layPhieuMuonTheoId(id);
+        if (phieu != null) {
+            phieu.setDaTra(!phieu.isDaTra()); // Toggle trạng thái
+            database.capNhatPhieuMuon(phieu);
+        }
+        return "redirect:/phieu-muon/quan-ly";
+    }
+
     @GetMapping("/xoa/{id}")
     public String xoaPhieu(@PathVariable int id) {
         database.xoaPhieuMuon(id);
         return "redirect:/phieu-muon/quan-ly";
     }
 }
+
