@@ -2,15 +2,15 @@ package com.example.servingwebcontent.pure_java_project.model;
 
 public class Sach {
     private int id;
-    private String tenSach;
+    private String ten;       // Sửa từ 'tenSach' thành 'ten' cho trùng với cột trong DB
     private String tacGia;
     private boolean daMuon = false;
 
     public Sach() {}
 
-    public Sach(int id, String tenSach, String tacGia) {
+    public Sach(int id, String ten, String tacGia) {
         this.id = id;
-        this.tenSach = tenSach;
+        this.ten = ten;
         this.tacGia = tacGia;
     }
 
@@ -18,8 +18,8 @@ public class Sach {
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public String getTenSach() { return tenSach; }
-    public void setTenSach(String tenSach) { this.tenSach = tenSach; }
+    public String getTen() { return ten; }
+    public void setTen(String ten) { this.ten = ten; }
 
     public String getTacGia() { return tacGia; }
     public void setTacGia(String tacGia) { this.tacGia = tacGia; }
