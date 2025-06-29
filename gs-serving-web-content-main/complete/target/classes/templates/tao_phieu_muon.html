@@ -11,9 +11,10 @@
     <div class="bg-white p-5 rounded shadow" style="min-width: 400px;">
         <h3 class="text-center mb-4">📄 Tạo Phiếu Mượn Sách</h3>
 
-        <!-- Hiển thị cảnh báo nếu ngày trả quá hạn -->
-        <div th:if="${param.loi}" class="alert alert-danger">
-            Ngày trả không được quá 15 ngày sau ngày mượn.
+        <!-- ✅ Thông báo flash -->
+        <div th:if="${thongBao}" class="alert text-center"
+             th:classappend="${thanhCong} ? 'alert-success' : 'alert-danger'">
+            <span th:text="${thongBao}"></span>
         </div>
 
         <form th:action="@{/phieu-muon/tao}" th:object="${phieuMuonMoi}" method="post">
@@ -27,7 +28,6 @@
                 <input type="text" th:field="*{tenSach}" class="form-control" required>
             </div>
 
-            <!-- ✅ Thêm trường Tác giả -->
             <div class="mb-3">
                 <label class="form-label">Tác giả:</label>
                 <input type="text" th:field="*{tacGia}" class="form-control" required>
@@ -75,6 +75,9 @@
                 ngayTraInput.value = '';
             }
         });
+
+        // Trigger lại sự kiện để thiết lập range nếu ngày mượn đã có giá trị
+        document.getElementById('ngayMuon').dispatchEvent(new Event('change'));
     });
 </script>
 
