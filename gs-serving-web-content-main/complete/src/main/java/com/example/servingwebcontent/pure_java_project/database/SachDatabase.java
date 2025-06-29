@@ -43,6 +43,32 @@ public class SachDatabase {
         return danhSach;
     }
 
+    // ✅ Thêm hàm lấy sách chưa mượn
+    public List<Sach> laySachChuaMuon() {
+        List<Sach> danhSach = new ArrayList<>();
+
+        String sql = "SELECT * FROM sach WHERE da_muon = false";
+
+        try (Connection conn = DriverManager.getConnection(jdbcUrl, username, password);
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Sach s = new Sach();
+                s.setId(rs.getInt("id"));
+                s.setTen(rs.getString("ten"));
+                s.setTacGia(rs.getString("tac_gia"));
+                s.setDaMuon(rs.getBoolean("da_muon"));
+                danhSach.add(s);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return danhSach;
+    }
+
     public void themSach(Sach sach) {
         String sql = "INSERT INTO sach (ten, tac_gia, da_muon) VALUES (?, ?, ?)";
 

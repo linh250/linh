@@ -7,51 +7,95 @@
 </head>
 <body class="bg-light">
 
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="bg-white p-5 rounded shadow" style="min-width: 400px;">
-        <h3 class="text-center mb-4">📄 Tạo Phiếu Mượn Sách</h3>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <!-- FORM TẠO PHIẾU -->
+        <div class="col-md-5">
+            <div class="bg-white p-4 rounded shadow">
+                <h4 class="mb-4 text-center">📄 Tạo Phiếu Mượn Sách</h4>
 
-        <!-- ✅ Thông báo flash -->
-        <div th:if="${thongBao}" class="alert text-center"
-             th:classappend="${thanhCong} ? 'alert-success' : 'alert-danger'">
-            <span th:text="${thongBao}"></span>
+                <!-- Thông báo -->
+                <div th:if="${thongBao}" class="alert text-center"
+                     th:classappend="${thanhCong} ? 'alert-success' : 'alert-danger'">
+                    <span th:text="${thongBao}"></span>
+                </div>
+
+                <form th:action="@{/phieu-muon/tao}" th:object="${phieuMuonMoi}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Tên người mượn:</label>
+                        <input type="text" th:field="*{tenNguoiMuon}" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tên sách:</label>
+                        <input type="text" id="tenSachInput" th:field="*{tenSach}" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tác giả:</label>
+                        <input type="text" id="tacGiaInput" th:field="*{tacGia}" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Ngày mượn:</label>
+                        <input type="date" id="ngayMuon" th:field="*{ngayMuon}" class="form-control" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Ngày trả (tối đa 15 ngày sau ngày mượn):</label>
+                        <input type="date" id="ngayTra" th:field="*{ngayTra}" class="form-control" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 fw-bold">Xác Nhận</button>
+                </form>
+            </div>
         </div>
 
-        <form th:action="@{/phieu-muon/tao}" th:object="${phieuMuonMoi}" method="post">
-            <div class="mb-3">
-                <label class="form-label">Tên người mượn:</label>
-                <input type="text" th:field="*{tenNguoiMuon}" class="form-control" required>
+        <!-- DANH SÁCH SÁCH CHƯA MƯỢN -->
+        <div class="col-md-6">
+            <div class="bg-white p-4 rounded shadow ms-md-4 mt-4 mt-md-0">
+                <h5 class="mb-3">📚 Chọn Sách Chưa Mượn</h5>
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên sách</th>
+                        <th>Tác giả</th>
+                        <th>Chọn</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="sach : ${danhSachChuaMuon}">
+                        <td th:text="${sach.id}">1</td>
+                        <td th:text="${sach.ten}">Tên</td>
+                        <td th:text="${sach.tacGia}">Tác giả</td>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-outline-primary btn-sm"
+                                    th:attr="data-ten=${sach.ten}, data-tacgia=${sach.tacGia}"
+                                    onclick="chonSach(this)">
+                                Chọn
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(danhSachChuaMuon)}">
+                        <td colspan="4" class="text-center text-muted">Không có sách nào chưa mượn.</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">Tên sách:</label>
-                <input type="text" th:field="*{tenSach}" class="form-control" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Tác giả:</label>
-                <input type="text" th:field="*{tacGia}" class="form-control" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Ngày mượn:</label>
-                <input type="date" id="ngayMuon" th:field="*{ngayMuon}" class="form-control" required>
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label">Ngày trả (tối đa 15 ngày sau ngày mượn):</label>
-                <input type="date" id="ngayTra" th:field="*{ngayTra}" class="form-control" required>
-            </div>
-
-            <button type="submit" class="btn btn-success w-100 fw-bold">Xác Nhận</button>
-        </form>
-
-        <!-- 🔙 Nút quay về trang chủ -->
-        <a href="/" class="btn btn-outline-secondary mt-3 w-100">⬅ Quay về Trang Chủ</a>
+        </div>
     </div>
 </div>
 
 <script>
+    function chonSach(button) {
+        const ten = button.getAttribute('data-ten');
+        const tacGia = button.getAttribute('data-tacgia');
+        document.getElementById('tenSachInput').value = ten;
+        document.getElementById('tacGiaInput').value = tacGia;
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         const ngayMuonInput = document.getElementById('ngayMuon');
         const ngayTraInput = document.getElementById('ngayTra');
@@ -79,8 +123,7 @@
             }
         });
 
-        // Trigger lại sự kiện để thiết lập range nếu ngày mượn đã có giá trị
-        document.getElementById('ngayMuon').dispatchEvent(new Event('change'));
+        ngayMuonInput.dispatchEvent(new Event('change'));
     });
 </script>
 

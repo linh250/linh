@@ -1,24 +1,29 @@
 package com.example.servingwebcontent.pure_java_project.database;
 
 import com.example.servingwebcontent.pure_java_project.model.PhieuMuon;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component // ✅ Cho Spring biết đây là 1 bean
 public class PhieuMuonDatabase {
 
-    private final String jdbcUrl;
-    private final String jdbcUser;
-    private final String jdbcPassword;
+    @Value("${spring.datasource.url}")
+    private String jdbcUrl;
 
+    @Value("${spring.datasource.username}")
+    private String jdbcUser;
+
+    @Value("${spring.datasource.password}")
+    private String jdbcPassword;
+
+    // ✅ Không cần constructor nữa – Spring sẽ inject 3 biến này từ cấu hình
     public PhieuMuonDatabase() {
-        jdbcUrl = System.getenv("DB_URL");
-        jdbcUser = System.getenv("DB_USER");
-        jdbcPassword = System.getenv("DB_PASS");
     }
 
-    // Thêm phiếu mượn
     public void themPhieuMuon(PhieuMuon phieu) {
         String sql = "INSERT INTO phieu_muon (ten_nguoi_muon, ten_sach, tac_gia, ngay_muon, ngay_tra, da_tra) " +
                      "VALUES (?, ?, ?, ?, ?, ?)";
@@ -40,7 +45,6 @@ public class PhieuMuonDatabase {
         }
     }
 
-    // Lấy toàn bộ danh sách phiếu mượn
     public List<PhieuMuon> layTatCaPhieuMuon() {
         List<PhieuMuon> danhSach = new ArrayList<>();
         String sql = "SELECT * FROM phieu_muon ORDER BY id DESC";
@@ -68,7 +72,6 @@ public class PhieuMuonDatabase {
         return danhSach;
     }
 
-    // Lấy phiếu mượn theo ID (cho trang sửa)
     public PhieuMuon layPhieuMuonTheoId(int id) {
         String sql = "SELECT * FROM phieu_muon WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPassword);
@@ -94,7 +97,6 @@ public class PhieuMuonDatabase {
         return null;
     }
 
-    // Cập nhật phiếu mượn (cho chức năng sửa)
     public void capNhatPhieuMuon(PhieuMuon phieu) {
         String sql = "UPDATE phieu_muon SET ten_nguoi_muon=?, ten_sach=?, tac_gia=?, ngay_muon=?, ngay_tra=?, da_tra=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPassword);
@@ -115,7 +117,6 @@ public class PhieuMuonDatabase {
         }
     }
 
-    // Xoá phiếu mượn theo ID
     public void xoaPhieuMuon(int id) {
         String sql = "DELETE FROM phieu_muon WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPassword);
@@ -129,5 +130,3 @@ public class PhieuMuonDatabase {
         }
     }
 }
-
-

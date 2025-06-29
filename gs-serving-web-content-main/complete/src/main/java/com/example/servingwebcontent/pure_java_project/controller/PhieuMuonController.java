@@ -1,7 +1,9 @@
 package com.example.servingwebcontent.pure_java_project.controller;
 
 import com.example.servingwebcontent.pure_java_project.database.PhieuMuonDatabase;
+import com.example.servingwebcontent.pure_java_project.database.SachDatabase;
 import com.example.servingwebcontent.pure_java_project.model.PhieuMuon;
+import com.example.servingwebcontent.pure_java_project.model.Sach;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,14 +15,27 @@ import java.util.List;
 @RequestMapping("/phieu-muon")
 public class PhieuMuonController {
 
-    private final PhieuMuonDatabase database = new PhieuMuonDatabase();
+    private final PhieuMuonDatabase database;
+    private final SachDatabase sachDatabase;
 
-    // Trang người dùng tạo phiếu mượn
+    // ✅ Inject thông qua constructor
+    public PhieuMuonController(PhieuMuonDatabase database, SachDatabase sachDatabase) {
+        this.database = database;
+        this.sachDatabase = sachDatabase;
+    }
+
     @GetMapping("/tao")
     public String hienThiFormTao(Model model) {
         if (!model.containsAttribute("phieuMuonMoi")) {
             model.addAttribute("phieuMuonMoi", new PhieuMuon());
         }
+
+        List<Sach> danhSachChuaMuon = sachDatabase.laySachChuaMuon();
+        model.addAttribute("danhSachChuaMuon", danhSachChuaMuon);
+
+        // ✅ Debug in ra số lượng sách
+        System.out.println(">> Số sách chưa mượn: " + danhSachChuaMuon.size());
+
         return "tao_phieu_muon";
     }
 
@@ -31,16 +46,28 @@ public class PhieuMuonController {
             if (phieu.getNgayTra().isAfter(phieu.getNgayMuon().plusDays(15))) {
                 redirectAttributes.addFlashAttribute("thongBao", "Ngày trả không được quá 15 ngày sau ngày mượn.");
                 redirectAttributes.addFlashAttribute("thanhCong", false);
-                redirectAttributes.addFlashAttribute("phieuMuonMoi", phieu); // giữ lại dữ liệu đã nhập
+                redirectAttributes.addFlashAttribute("phieuMuonMoi", phieu);
                 return "redirect:/phieu-muon/tao";
             }
         }
 
         try {
             database.themPhieuMuon(phieu);
+
+            List<Sach> danhSach = sachDatabase.layDanhSachSach();
+            for (Sach s : danhSach) {
+                if (s.getTen().equalsIgnoreCase(phieu.getTenSach()) &&
+                    s.getTacGia().equalsIgnoreCase(phieu.getTacGia())) {
+                    s.setDaMuon(true);
+                    sachDatabase.capNhatSach(s);
+                    break;
+                }
+            }
+
             redirectAttributes.addFlashAttribute("thongBao", "Tạo phiếu mượn thành công!");
             redirectAttributes.addFlashAttribute("thanhCong", true);
         } catch (Exception e) {
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("thongBao", "Có lỗi xảy ra khi tạo phiếu mượn. Vui lòng thử lại.");
             redirectAttributes.addFlashAttribute("thanhCong", false);
             redirectAttributes.addFlashAttribute("phieuMuonMoi", phieu);
@@ -49,7 +76,6 @@ public class PhieuMuonController {
         return "redirect:/phieu-muon/tao";
     }
 
-    // Trang người quản lý xem danh sách phiếu mượn
     @GetMapping("/quan-ly")
     public String danhSachQuanLy(Model model) {
         List<PhieuMuon> danhSach = database.layTatCaPhieuMuon();
@@ -57,7 +83,6 @@ public class PhieuMuonController {
         return "nguoi_quan_ly";
     }
 
-    // Trang sửa phiếu mượn
     @GetMapping("/sua/{id}")
     public String hienThiFormSua(@PathVariable int id, Model model) {
         PhieuMuon phieu = database.layPhieuMuonTheoId(id);
