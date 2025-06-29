@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh Mục Sách</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 40px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 90%;
+            margin: auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #343a40;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .btn {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-edit {
+            background-color: #007bff;
+        }
+
+        .btn-edit:hover {
+            background-color: #0069d9;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+
+        .form-them {
+            width: 90%;
+            margin: 40px auto 0;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .form-them h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button[type="submit"] {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<h2>📚 Danh Mục Sách</h2>
+
+<!-- Danh sách sách -->
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên sách</th>
+            <th>Tác giả</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="sach : ${dsSach}">
+            <td th:text="${sach.id}"></td>
+            <td th:text="${sach.tenSach}"></td>
+            <td th:text="${sach.tacGia}"></td>
+            <td th:text="${sach.daMuon} ? 'Đã mượn' : 'Chưa mượn'"></td>
+            <td>
+                <a th:href="@{/sach/sua/{id}(id=${sach.id})}" class="btn btn-edit">Sửa</a>
+                <a th:href="@{/sach/xoa/{id}(id=${sach.id})}"
+                   onclick="return confirm('Bạn có chắc muốn xoá sách này không?')"
+                   class="btn btn-delete">Xoá</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Form thêm sách mới -->
+<div class="form-them">
+    <h3>➕ Thêm Sách Mới</h3>
+    <form th:action="@{/sach/them}" th:object="${sachMoi}" method="post">
+        <div class="form-group">
+            <label for="tenSach">Tên sách:</label>
+            <input type="text" id="tenSach" th:field="*{tenSach}" required />
+        </div>
+        <div class="form-group">
+            <label for="tacGia">Tác giả:</label>
+            <input type="text" id="tacGia" th:field="*{tacGia}" required />
+        </div>
+        <button type="submit">Thêm sách</button>
+    </form>
+</div>
+
+</body>
+</html>
