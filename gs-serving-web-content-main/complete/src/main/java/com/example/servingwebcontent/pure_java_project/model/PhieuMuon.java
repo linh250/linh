@@ -3,63 +3,33 @@ package com.example.servingwebcontent.pure_java_project.model;
 import java.time.LocalDate;
 
 public class PhieuMuon {
-
     private int id;
     private String tenNguoiMuon;
     private String tenSach;
     private LocalDate ngayMuon;
     private LocalDate ngayTra;
+    private boolean daTra;
 
     public PhieuMuon() {
+        this.ngayMuon = LocalDate.now();
+        this.daTra = false;
     }
 
-    public PhieuMuon(int id, String tenNguoiMuon, String tenSach, LocalDate ngayMuon, LocalDate ngayTra) {
-        this.id = id;
-        this.tenNguoiMuon = tenNguoiMuon;
-        this.tenSach = tenSach;
-        this.ngayMuon = ngayMuon;
-        this.ngayTra = ngayTra;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    // Getter & Setter
+    public String getTenNguoiMuon() { return tenNguoiMuon; }
+    public void setTenNguoiMuon(String tenNguoiMuon) { this.tenNguoiMuon = tenNguoiMuon; }
 
-    public int getId() {
-        return id;
-    }
+    public String getTenSach() { return tenSach; }
+    public void setTenSach(String tenSach) { this.tenSach = tenSach; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public LocalDate getNgayMuon() { return ngayMuon; }
+    public void setNgayMuon(LocalDate ngayMuon) { this.ngayMuon = ngayMuon; }
 
-    public String getTenNguoiMuon() {
-        return tenNguoiMuon;
-    }
+    public LocalDate getNgayTra() { return ngayTra; }
+    public void setNgayTra(LocalDate ngayTra) { this.ngayTra = ngayTra; }
 
-    public void setTenNguoiMuon(String tenNguoiMuon) {
-        this.tenNguoiMuon = tenNguoiMuon;
-    }
-
-    public String getTenSach() {
-        return tenSach;
-    }
-
-    public void setTenSach(String tenSach) {
-        this.tenSach = tenSach;
-    }
-
-    public LocalDate getNgayMuon() {
-        return ngayMuon;
-    }
-
-    public void setNgayMuon(LocalDate ngayMuon) {
-        this.ngayMuon = ngayMuon;
-    }
-
-    public LocalDate getNgayTra() {
-        return ngayTra;
-    }
-
-    public void setNgayTra(LocalDate ngayTra) {
-        this.ngayTra = ngayTra;
-    }
+    public boolean isDaTra() { return daTra; }
+    public void setDaTra(boolean daTra) { this.daTra = daTra; }
 }

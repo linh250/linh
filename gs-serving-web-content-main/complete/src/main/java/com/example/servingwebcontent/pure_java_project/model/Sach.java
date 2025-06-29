@@ -6,17 +6,15 @@ public class Sach {
     private String tacGia;
     private boolean daMuon = false;
 
-    // Constructors
     public Sach() {}
 
     public Sach(int id, String tenSach, String tacGia) {
         this.id = id;
         this.tenSach = tenSach;
         this.tacGia = tacGia;
-        this.daMuon = false;
     }
 
-    // Getters & setters
+    // Getter + Setter
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
