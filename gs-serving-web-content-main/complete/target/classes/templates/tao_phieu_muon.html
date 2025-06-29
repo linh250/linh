@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tạo Phiếu Mượn</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="bg-white p-5 rounded shadow" style="min-width: 400px;">
+        <h3 class="text-center mb-4">📄 Tạo Phiếu Mượn Sách</h3>
+
+        <!-- Hiển thị cảnh báo nếu ngày trả quá hạn -->
+        <div th:if="${param.loi}" class="alert alert-danger">
+            Ngày trả không được quá 15 ngày sau ngày mượn.
+        </div>
+
+        <form th:action="@{/phieu-muon/tao}" th:object="${phieuMuonMoi}" method="post">
+            <div class="mb-3">
+                <label class="form-label">Tên người mượn:</label>
+                <input type="text" th:field="*{tenNguoiMuon}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Tên sách:</label>
+                <input type="text" th:field="*{tenSach}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Ngày mượn:</label>
+                <input type="date" id="ngayMuon" th:field="*{ngayMuon}" class="form-control" required>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Ngày trả (tối đa 15 ngày sau ngày mượn):</label>
+                <input type="date" id="ngayTra" th:field="*{ngayTra}" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100 fw-bold">Xác Nhận</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ngayMuonInput = document.getElementById('ngayMuon');
+        const ngayTraInput = document.getElementById('ngayTra');
+
+        ngayMuonInput.addEventListener('change', function () {
+            const ngayMuon = new Date(this.value);
+            if (isNaN(ngayMuon)) {
+                ngayTraInput.min = '';
+                ngayTraInput.max = '';
+                ngayTraInput.value = '';
+                return;
+            }
+
+            const maxNgayTra = new Date(ngayMuon);
+            maxNgayTra.setDate(maxNgayTra.getDate() + 15);
+
+            const formatDate = date => date.toISOString().split('T')[0];
+
+            ngayTraInput.min = formatDate(ngayMuon);
+            ngayTraInput.max = formatDate(maxNgayTra);
+
+            const currentNgayTra = new Date(ngayTraInput.value);
+            if (currentNgayTra < ngayMuon || currentNgayTra > maxNgayTra) {
+                ngayTraInput.value = '';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
