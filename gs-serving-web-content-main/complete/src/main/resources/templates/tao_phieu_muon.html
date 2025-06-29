@@ -19,12 +19,12 @@
         <form th:action="@{/phieu-muon/tao}" th:object="${phieuMuonMoi}" method="post">
             <div class="mb-3">
                 <label class="form-label">Tên người mượn:</label>
-                <input type="text" th:field="*{tenNguoiMuon}" class="form-control" required>
+                <input type="text" th:field="*{nguoiDung.tenNguoiDung}" class="form-control" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Tên sách:</label>
-                <input type="text" th:field="*{tenSach}" class="form-control" required>
+                <input type="text" th:field="*{sach.tenSach}" class="form-control" required>
             </div>
 
             <div class="mb-3">

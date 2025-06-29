@@ -17,7 +17,7 @@ public class SachDatabase {
     @Value("${spring.datasource.username}")
     private String jdbcUser;
 
-    @Value("${aiven.db.password}")
+    @Value("${spring.datasource.password}")
     private String jdbcPass;
 
     // 1. Thêm sách
