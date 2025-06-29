@@ -1,20 +1,20 @@
 package com.example.servingwebcontent.pure_java_project.controller;
 
+import com.example.servingwebcontent.pure_java_project.database.PhieuMuonDatabase;
 import com.example.servingwebcontent.pure_java_project.model.PhieuMuon;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-//import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/phieu-muon")
 public class PhieuMuonController {
 
-    private final List<PhieuMuon> danhSachPhieuMuon = new ArrayList<>();
+    private final PhieuMuonDatabase database = new PhieuMuonDatabase();
 
+    // Trang người dùng tạo phiếu mượn
     @GetMapping("/tao")
     public String hienThiFormTao(Model model) {
         model.addAttribute("phieuMuonMoi", new PhieuMuon());
@@ -23,22 +23,40 @@ public class PhieuMuonController {
 
     @PostMapping("/tao")
     public String taoPhieu(@ModelAttribute("phieuMuonMoi") PhieuMuon phieu) {
-        phieu.setId(danhSachPhieuMuon.size() + 1);
-
-        // Kiểm tra ngày trả không vượt quá 15 ngày từ ngày mượn
         if (phieu.getNgayTra() != null && phieu.getNgayMuon() != null) {
             if (phieu.getNgayTra().isAfter(phieu.getNgayMuon().plusDays(15))) {
                 return "redirect:/phieu-muon/tao?loi=ngaytra";
             }
         }
-
-        danhSachPhieuMuon.add(phieu);
+        database.themPhieuMuon(phieu);
         return "redirect:/?phieu=ok";
     }
 
-    @GetMapping("/api/all")
-    @ResponseBody
-    public List<PhieuMuon> tatCaPhieuMuon() {
-        return danhSachPhieuMuon;
+    // Trang người quản lý xem danh sách phiếu mượn
+    @GetMapping("/quan-ly")
+    public String danhSachQuanLy(Model model) {
+        List<PhieuMuon> danhSach = database.layTatCaPhieuMuon();
+        model.addAttribute("danhSach", danhSach);
+        return "nguoi_quan_ly";
+    }
+
+    // Trang sửa phiếu mượn
+    @GetMapping("/sua/{id}")
+    public String hienThiFormSua(@PathVariable int id, Model model) {
+        PhieuMuon phieu = database.layPhieuMuonTheoId(id);
+        model.addAttribute("phieu", phieu);
+        return "sua_phieu_muon";
+    }
+
+    @PostMapping("/sua")
+    public String capNhatPhieu(@ModelAttribute("phieu") PhieuMuon phieu) {
+        database.capNhatPhieuMuon(phieu);
+        return "redirect:/phieu-muon/quan-ly";
+    }
+
+    @GetMapping("/xoa/{id}")
+    public String xoaPhieu(@PathVariable int id) {
+        database.xoaPhieuMuon(id);
+        return "redirect:/phieu-muon/quan-ly";
     }
 }

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sửa phiếu mượn</title>
+    <meta charset="UTF-8"/>
+</head>
+<body>
+<h1>Sửa phiếu mượn</h1>
+
+<form th:action="@{/phieu-muon/sua}" method="post" th:object="${phieu}">
+    <input type="hidden" th:field="*{id}"/>
+
+    <label>Người mượn: <input type="text" th:field="*{tenNguoiMuon}" required></label><br>
+    <label>Tên sách: <input type="text" th:field="*{tenSach}" required></label><br>
+    <label>Tác giả: <input type="text" th:field="*{tacGia}" required></label><br>
+    <label>Ngày mượn: <input type="date" th:field="*{ngayMuon}" required></label><br>
+    <label>Ngày trả: <input type="date" th:field="*{ngayTra}" required></label><br>
+    <label>Đã trả: <input type="checkbox" th:field="*{daTra}"/></label><br>
+
+    <button type="submit">Cập nhật</button>
+</form>
+
+</body>
+</html>
