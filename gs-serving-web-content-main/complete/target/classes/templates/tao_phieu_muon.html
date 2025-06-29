@@ -27,6 +27,12 @@
                 <input type="text" th:field="*{tenSach}" class="form-control" required>
             </div>
 
+            <!-- ✅ Thêm trường Tác giả -->
+            <div class="mb-3">
+                <label class="form-label">Tác giả:</label>
+                <input type="text" th:field="*{tacGia}" class="form-control" required>
+            </div>
+
             <div class="mb-3">
                 <label class="form-label">Ngày mượn:</label>
                 <input type="date" id="ngayMuon" th:field="*{ngayMuon}" class="form-control" required>

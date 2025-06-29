@@ -6,6 +6,7 @@ public class PhieuMuon {
     private int id;
     private String tenNguoiMuon;
     private String tenSach;
+    private String tacGia; 
     private LocalDate ngayMuon;
     private LocalDate ngayTra;
     private boolean daTra;
@@ -23,6 +24,9 @@ public class PhieuMuon {
 
     public String getTenSach() { return tenSach; }
     public void setTenSach(String tenSach) { this.tenSach = tenSach; }
+
+    public String getTacGia() { return tacGia; } // 👉 Getter mới
+    public void setTacGia(String tacGia) { this.tacGia = tacGia; } // 👉 Setter mới
 
     public LocalDate getNgayMuon() { return ngayMuon; }
     public void setNgayMuon(LocalDate ngayMuon) { this.ngayMuon = ngayMuon; }
