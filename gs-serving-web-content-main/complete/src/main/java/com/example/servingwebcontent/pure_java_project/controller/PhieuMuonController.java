@@ -7,9 +7,6 @@ import com.example.servingwebcontent.pure_java_project.model.Sach;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/phieu-muon")
@@ -23,91 +20,75 @@ public class PhieuMuonController {
         this.sachDatabase = sachDatabase;
     }
 
+    // GET: Hiển thị form tạo phiếu
     @GetMapping("/tao")
     public String hienThiFormTao(Model model) {
-        if (!model.containsAttribute("phieuMuonMoi")) {
-            model.addAttribute("phieuMuonMoi", new PhieuMuon());
+        model.addAttribute("phieuMuonMoi", new PhieuMuon());
+        model.addAttribute("danhSachChuaMuon", sachDatabase.laySachChuaMuon());
+        model.addAttribute("danhSachDaMuon", database.layTatCaPhieuMuon());
+        model.addAttribute("dangSua", false);
+        return "tao_phieu_muon";
+    }
+
+    // GET: Sửa phiếu (đổ dữ liệu vào form)
+    @GetMapping("/sua/{id}")
+    public String suaPhieu(@PathVariable int id, Model model) {
+        PhieuMuon phieu = database.layPhieuMuonTheoId(id);
+        if (phieu == null) return "redirect:/phieu-muon/tao";
+
+        model.addAttribute("phieuMuonMoi", phieu);
+        model.addAttribute("danhSachChuaMuon", sachDatabase.laySachChuaMuon());
+        model.addAttribute("danhSachDaMuon", database.layTatCaPhieuMuon());
+        model.addAttribute("dangSua", true);
+        return "tao_phieu_muon";
+    }
+
+    // POST: Tạo hoặc sửa phiếu mượn
+    @PostMapping("/tao")
+    public String xuLyPhieu(@ModelAttribute("phieuMuonMoi") PhieuMuon phieu, Model model) {
+        boolean dangSua = phieu.getId() != 0;
+
+        if (phieu.getNgayTra() != null && phieu.getNgayMuon() != null &&
+            phieu.getNgayTra().isAfter(phieu.getNgayMuon().plusDays(15))) {
+            model.addAttribute("thongBao", "Ngày trả không được quá 15 ngày sau ngày mượn.");
+            model.addAttribute("thanhCong", false);
+            model.addAttribute("dangSua", dangSua);
+            model.addAttribute("phieuMoiTao", null);
+        } else {
+            if (dangSua) {
+                database.capNhatPhieuMuon(phieu);
+                model.addAttribute("thongBao", "Cập nhật phiếu thành công!");
+            } else {
+                database.themPhieuMuon(phieu);
+                model.addAttribute("thongBao", "Tạo phiếu mượn thành công!");
+
+                for (Sach s : sachDatabase.layDanhSachSach()) {
+                    if (s.getTen().equalsIgnoreCase(phieu.getTenSach()) &&
+                        s.getTacGia().equalsIgnoreCase(phieu.getTacGia())) {
+                        s.setDaMuon(true);
+                        sachDatabase.capNhatSach(s);
+                        break;
+                    }
+                }
+            }
+
+            model.addAttribute("thanhCong", true);
+            model.addAttribute("phieuMoiTao", phieu);  // ✅ Hiển thị lại phiếu vừa tạo/sửa
+            model.addAttribute("dangSua", false);      // reset flag
         }
 
-        List<Sach> danhSachChuaMuon = sachDatabase.laySachChuaMuon();
-        model.addAttribute("danhSachChuaMuon", danhSachChuaMuon);
-
-        System.out.println(">> Số sách chưa mượn: " + danhSachChuaMuon.size());
+        // Dữ liệu lại cho form
+        model.addAttribute("phieuMuonMoi", new PhieuMuon());
+        model.addAttribute("danhSachChuaMuon", sachDatabase.laySachChuaMuon());
+        model.addAttribute("danhSachDaMuon", database.layTatCaPhieuMuon());
 
         return "tao_phieu_muon";
     }
 
-    @PostMapping("/tao")
-    public String taoPhieu(@ModelAttribute("phieuMuonMoi") PhieuMuon phieu,
-                           RedirectAttributes redirectAttributes) {
-        if (phieu.getNgayTra() != null && phieu.getNgayMuon() != null) {
-            if (phieu.getNgayTra().isAfter(phieu.getNgayMuon().plusDays(15))) {
-                redirectAttributes.addFlashAttribute("thongBao", "Ngày trả không được quá 15 ngày sau ngày mượn.");
-                redirectAttributes.addFlashAttribute("thanhCong", false);
-                redirectAttributes.addFlashAttribute("phieuMuonMoi", phieu);
-                return "redirect:/phieu-muon/tao";
-            }
-        }
-
-        try {
-            database.themPhieuMuon(phieu);
-
-            List<Sach> danhSach = sachDatabase.layDanhSachSach();
-            for (Sach s : danhSach) {
-                if (s.getTen().equalsIgnoreCase(phieu.getTenSach()) &&
-                    s.getTacGia().equalsIgnoreCase(phieu.getTacGia())) {
-                    s.setDaMuon(true);
-                    sachDatabase.capNhatSach(s);
-                    break;
-                }
-            }
-
-            redirectAttributes.addFlashAttribute("thongBao", "Tạo phiếu mượn thành công!");
-            redirectAttributes.addFlashAttribute("thanhCong", true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("thongBao", "Có lỗi xảy ra khi tạo phiếu mượn. Vui lòng thử lại.");
-            redirectAttributes.addFlashAttribute("thanhCong", false);
-            redirectAttributes.addFlashAttribute("phieuMuonMoi", phieu);
-        }
-
-        return "redirect:/phieu-muon/tao";
-    }
-
-    @GetMapping("/quan-ly")
-    public String danhSachQuanLy(Model model) {
-        List<PhieuMuon> danhSach = database.layTatCaPhieuMuon();
-        model.addAttribute("danhSach", danhSach);
-        return "nguoi_quan_ly";
-    }
-
-    @GetMapping("/sua/{id}")
-    public String hienThiFormSua(@PathVariable int id, Model model) {
-        PhieuMuon phieu = database.layPhieuMuonTheoId(id);
-        model.addAttribute("phieu", phieu);
-        return "sua_phieu_muon";
-    }
-
-    @PostMapping("/sua")
-    public String capNhatPhieu(@ModelAttribute("phieu") PhieuMuon phieu) {
-        database.capNhatPhieuMuon(phieu);
-        return "redirect:/phieu-muon/quan-ly";
-    }
-
-    @PostMapping("/cap-nhat-tra/{id}")
-    public String capNhatTrangThaiDaTra(@PathVariable int id) {
-        PhieuMuon phieu = database.layPhieuMuonTheoId(id);
-        if (phieu != null) {
-            phieu.setDaTra(!phieu.isDaTra()); // Toggle trạng thái
-            database.capNhatPhieuMuon(phieu);
-        }
-        return "redirect:/phieu-muon/quan-ly";
-    }
-
+    // GET: Xoá phiếu
     @GetMapping("/xoa/{id}")
     public String xoaPhieu(@PathVariable int id) {
         database.xoaPhieuMuon(id);
-        return "redirect:/phieu-muon/quan-ly";
+        return "redirect:/phieu-muon/tao";
     }
 }
-

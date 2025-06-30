@@ -1,14 +1,21 @@
 package com.example.servingwebcontent.pure_java_project.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 
 public class PhieuMuon {
     private int id;
     private String tenNguoiMuon;
     private String tenSach;
-    private String tacGia; 
+    private String tacGia;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")  // ✅ Giúp Spring hiểu đúng định dạng ngày
     private LocalDate ngayMuon;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")  // ✅ Giúp Spring hiểu đúng định dạng ngày
     private LocalDate ngayTra;
+
     private boolean daTra;
 
     public PhieuMuon() {
@@ -25,8 +32,8 @@ public class PhieuMuon {
     public String getTenSach() { return tenSach; }
     public void setTenSach(String tenSach) { this.tenSach = tenSach; }
 
-    public String getTacGia() { return tacGia; } // 👉 Getter mới
-    public void setTacGia(String tacGia) { this.tacGia = tacGia; } // 👉 Setter mới
+    public String getTacGia() { return tacGia; }
+    public void setTacGia(String tacGia) { this.tacGia = tacGia; }
 
     public LocalDate getNgayMuon() { return ngayMuon; }
     public void setNgayMuon(LocalDate ngayMuon) { this.ngayMuon = ngayMuon; }
