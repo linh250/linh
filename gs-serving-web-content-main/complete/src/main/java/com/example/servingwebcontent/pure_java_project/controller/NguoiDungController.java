@@ -7,6 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/nguoidung")
 public class NguoiDungController {
@@ -17,7 +19,7 @@ public class NguoiDungController {
         this.db = db;
     }
 
-    /* 1. Hiển thị form đăng ký */
+    /* 1. Form đăng ký người dùng mới */
     @GetMapping("/dangky")
     public String hienFormDangKy(Model model) {
         model.addAttribute("nguoiDungMoi", new NguoiDung());
@@ -30,5 +32,13 @@ public class NguoiDungController {
                              RedirectAttributes ra) {
         db.themNguoiDung(nd);               // lưu DB – trả về id tự tăng
         return "redirect:/phieu-muon/tao?userId=" + nd.getId();
+    }
+
+    /* 3. Danh sách người dùng cho Quản lý */
+    @GetMapping("/danh-sach")
+    public String hienThiDanhSachNguoiDung(Model model) {
+        List<NguoiDung> list = db.layTatCaNguoiDung();
+        model.addAttribute("nguoiDungList", list);
+        return "quanly_nguoidung";          // templates/quanly_nguoidung.html
     }
 }
