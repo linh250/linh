@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component // ✅ Cho Spring biết đây là 1 bean
+@Component 
 public class PhieuMuonDatabase {
 
     @Value("${spring.datasource.url}")
@@ -20,7 +20,7 @@ public class PhieuMuonDatabase {
     @Value("${spring.datasource.password}")
     private String jdbcPassword;
 
-    // ✅ Không cần constructor nữa – Spring sẽ inject 3 biến này từ cấu hình
+    
     public PhieuMuonDatabase() {
     }
 
