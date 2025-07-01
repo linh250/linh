@@ -25,21 +25,20 @@ public class PhieuMuonController {
     public String hienThiFormTao(Model model) {
         model.addAttribute("phieuMuonMoi", new PhieuMuon());
         model.addAttribute("danhSachChuaMuon", sachDatabase.laySachChuaMuon());
-        model.addAttribute("danhSachDaMuon", database.layTatCaPhieuMuon());
-        model.addAttribute("dangSua", false);
         return "tao_phieu_muon";
     }
 
-    // GET: Sửa phiếu (đổ dữ liệu vào form)
+    // GET: Sửa phiếu (đổ dữ liệu vào form + hiển thị phiếu bên dưới)
     @GetMapping("/sua/{id}")
     public String suaPhieu(@PathVariable int id, Model model) {
         PhieuMuon phieu = database.layPhieuMuonTheoId(id);
         if (phieu == null) return "redirect:/phieu-muon/tao";
 
-        model.addAttribute("phieuMuonMoi", phieu);
+        model.addAttribute("phieuMuonMoi", phieu);         // đổ lên form
+        model.addAttribute("phieuMoiTao", phieu);          // hiển thị dưới bảng
         model.addAttribute("danhSachChuaMuon", sachDatabase.laySachChuaMuon());
-        model.addAttribute("danhSachDaMuon", database.layTatCaPhieuMuon());
-        model.addAttribute("dangSua", true);
+        model.addAttribute("thongBao", "Sẵn sàng sửa phiếu.");
+        model.addAttribute("thanhCong", true);
         return "tao_phieu_muon";
     }
 
@@ -50,18 +49,21 @@ public class PhieuMuonController {
 
         if (phieu.getNgayTra() != null && phieu.getNgayMuon() != null &&
             phieu.getNgayTra().isAfter(phieu.getNgayMuon().plusDays(15))) {
-            model.addAttribute("thongBao", "Ngày trả không được quá 15 ngày sau ngày mượn.");
+
+            model.addAttribute("thongBao", "❌ Ngày trả không được quá 15 ngày sau ngày mượn.");
             model.addAttribute("thanhCong", false);
-            model.addAttribute("dangSua", dangSua);
             model.addAttribute("phieuMoiTao", null);
+            model.addAttribute("phieuMuonMoi", phieu); // giữ lại dữ liệu cũ để user sửa tiếp
+
         } else {
             if (dangSua) {
                 database.capNhatPhieuMuon(phieu);
-                model.addAttribute("thongBao", "Cập nhật phiếu thành công!");
+                model.addAttribute("thongBao", "✅ Cập nhật phiếu thành công!");
             } else {
                 database.themPhieuMuon(phieu);
-                model.addAttribute("thongBao", "Tạo phiếu mượn thành công!");
+                model.addAttribute("thongBao", "✅ Tạo phiếu mượn thành công!");
 
+                // Cập nhật trạng thái đã mượn cho sách
                 for (Sach s : sachDatabase.layDanhSachSach()) {
                     if (s.getTen().equalsIgnoreCase(phieu.getTenSach()) &&
                         s.getTacGia().equalsIgnoreCase(phieu.getTacGia())) {
@@ -72,16 +74,12 @@ public class PhieuMuonController {
                 }
             }
 
+            model.addAttribute("phieuMoiTao", phieu); // hiển thị lại bên dưới
+            model.addAttribute("phieuMuonMoi", new PhieuMuon()); // làm trống form
             model.addAttribute("thanhCong", true);
-            model.addAttribute("phieuMoiTao", phieu);  // ✅ Hiển thị lại phiếu vừa tạo/sửa
-            model.addAttribute("dangSua", false);      // reset flag
         }
 
-        // Dữ liệu lại cho form
-        model.addAttribute("phieuMuonMoi", new PhieuMuon());
         model.addAttribute("danhSachChuaMuon", sachDatabase.laySachChuaMuon());
-        model.addAttribute("danhSachDaMuon", database.layTatCaPhieuMuon());
-
         return "tao_phieu_muon";
     }
 
