@@ -122,6 +122,31 @@ public class NguoiDungDatabase {
         }
     }
 
+    // 6. Tìm kiếm người dùng theo từ khoá (tên, tài khoản, liên hệ)
+    public List<NguoiDung> timKiemNguoiDung(String keyword) {
+        List<NguoiDung> ketQua = new ArrayList<>();
+        String sql = """
+            SELECT * FROM nguoi_dung
+            WHERE ho_ten LIKE ? OR tai_khoan LIKE ? OR lien_he LIKE ?
+            """;
+
+        try (Connection c = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPassword);
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            String tuKhoa = "%" + keyword + "%";
+            ps.setString(1, tuKhoa);
+            ps.setString(2, tuKhoa);
+            ps.setString(3, tuKhoa);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) ketQua.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ketQua;
+    }
+
     // helper: map ResultSet -> NguoiDung
     private NguoiDung mapRow(ResultSet rs) throws SQLException {
         NguoiDung nd = new NguoiDung();

@@ -19,7 +19,7 @@ public class NguoiDungController {
         this.db = db;
     }
 
-    // 1. Form đăng ký (vẫn dùng /dangky vì dành cho người dùng)
+    // 1. Form đăng ký
     @GetMapping("/dangky")
     public String hienFormDangKy(Model model) {
         model.addAttribute("nguoiDungMoi", new NguoiDung());
@@ -35,11 +35,20 @@ public class NguoiDungController {
         return "redirect:/phieu-muon/tao";
     }
 
-    // 3. Danh sách người dùng – TRANG CHÍNH tại /quan-ly/nguoi-dung
+    // 3. Danh sách người dùng – mặc định
     @GetMapping("")
     public String hienThiDanhSachNguoiDung(Model model) {
         List<NguoiDung> list = db.layTatCaNguoiDung();
         model.addAttribute("nguoiDungList", list);
+        return "quanly_nguoidung";
+    }
+
+    // ✅ 3.1. Tìm kiếm người dùng
+    @GetMapping("/tim-kiem")
+    public String timKiemNguoiDung(@RequestParam("keyword") String keyword, Model model) {
+        List<NguoiDung> ketQua = db.timKiemNguoiDung(keyword);
+        model.addAttribute("nguoiDungList", ketQua);
+        model.addAttribute("keyword", keyword);
         return "quanly_nguoidung";
     }
 
@@ -58,11 +67,11 @@ public class NguoiDungController {
             model.addAttribute("nguoiDungSua", nd);
             return "sua_nguoidung";
         } else {
-            return "redirect:/quan-ly/nguoi-dung"; // Nếu không tìm thấy
+            return "redirect:/quan-ly/nguoi-dung";
         }
     }
 
-    // 6. Xử lý sửa người dùng
+    // 6. Xử lý sửa
     @PostMapping("/sua")
     public String xuLySua(@ModelAttribute("nguoiDungSua") NguoiDung nd) {
         db.capNhatNguoiDung(nd);

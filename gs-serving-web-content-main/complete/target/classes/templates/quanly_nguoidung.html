@@ -10,6 +10,13 @@
 <div class="container py-4">
     <h1 class="mb-4 text-center">📋 Danh sách người dùng</h1>
 
+    <!-- 🔍 Form tìm kiếm -->
+    <form th:action="@{/quan-ly/nguoi-dung/tim-kiem}" method="get" class="mb-4 d-flex justify-content-center">
+        <input type="text" name="keyword" class="form-control w-50 me-2" placeholder="Nhập tên, tài khoản hoặc liên hệ...">
+        <button type="submit" class="btn btn-outline-primary">Tìm kiếm</button>
+    </form>
+
+    <!-- 📋 Bảng danh sách người dùng -->
     <table class="table table-bordered table-striped align-middle">
         <thead class="table-primary text-center">
             <tr>
@@ -31,7 +38,6 @@
                 <td th:text="${nd.lienHe}"></td>
                 <td th:text="${nd.taiKhoan}"></td>
                 <td class="text-center">
-                    <!-- ✅ Đã cập nhật đúng đường dẫn -->
                     <a th:href="@{'/quan-ly/nguoi-dung/sua/' + ${nd.id}}" class="btn btn-sm btn-primary">Sửa</a>
                     <a th:href="@{'/quan-ly/nguoi-dung/xoa/' + ${nd.id}}" class="btn btn-sm btn-danger"
                        onclick="return confirm('Bạn có chắc muốn xoá người dùng này?');">Xoá</a>
