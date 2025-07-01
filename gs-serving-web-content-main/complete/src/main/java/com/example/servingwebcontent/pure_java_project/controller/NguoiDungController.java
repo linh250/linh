@@ -19,26 +19,30 @@ public class NguoiDungController {
         this.db = db;
     }
 
-    /* 1. Form đăng ký người dùng mới */
+    // 1. Form đăng ký
     @GetMapping("/dangky")
     public String hienFormDangKy(Model model) {
         model.addAttribute("nguoiDungMoi", new NguoiDung());
-        return "dangky_nguoidung";          // templates/dangky_nguoidung.html
+        return "dangky_nguoidung";
     }
 
-    /* 2. Xử lý đăng ký, rồi chuyển sang trang tạo phiếu */
+    // 2. Xử lý đăng ký (🚫 bỏ session, ✅ dùng redirect attribute)
     @PostMapping("/dangky")
     public String xuLyDangKy(@ModelAttribute("nguoiDungMoi") NguoiDung nd,
-                             RedirectAttributes ra) {
-        db.themNguoiDung(nd);               // lưu DB – trả về id tự tăng
-        return "redirect:/phieu-muon/tao?userId=" + nd.getId();
+                             RedirectAttributes redirect) {
+        db.themNguoiDung(nd);
+
+        // ✅ Truyền tên người vừa đăng ký sang form tạo phiếu
+        redirect.addFlashAttribute("tenNguoiMoi", nd.getHoTen());
+
+        return "redirect:/phieu-muon/tao";
     }
 
-    /* 3. Danh sách người dùng cho Quản lý */
+    // 3. Danh sách người dùng
     @GetMapping("/danh-sach")
     public String hienThiDanhSachNguoiDung(Model model) {
         List<NguoiDung> list = db.layTatCaNguoiDung();
         model.addAttribute("nguoiDungList", list);
-        return "quanly_nguoidung";          // templates/quanly_nguoidung.html
+        return "quanly_nguoidung";
     }
 }

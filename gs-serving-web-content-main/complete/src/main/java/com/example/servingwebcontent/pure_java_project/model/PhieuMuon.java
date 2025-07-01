@@ -18,6 +18,8 @@ public class PhieuMuon {
 
     private boolean daTra;
 
+    private long nguoiDungId;  // ✅ Mã người dùng mượn sách
+
     public PhieuMuon() {
         this.ngayMuon = LocalDate.now();
         this.daTra = false;
@@ -43,4 +45,7 @@ public class PhieuMuon {
 
     public boolean isDaTra() { return daTra; }
     public void setDaTra(boolean daTra) { this.daTra = daTra; }
+
+    public long getNguoiDungId() { return nguoiDungId; }
+    public void setNguoiDungId(long nguoiDungId) { this.nguoiDungId = nguoiDungId; }
 }

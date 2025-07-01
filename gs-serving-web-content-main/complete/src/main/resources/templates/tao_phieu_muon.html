@@ -25,11 +25,14 @@
                 </div>
 
                 <form th:action="@{/phieu-muon/tao}" th:object="${phieuMuonMoi}" method="post">
-                    <input type="hidden" th:field="*{id}" />
+                    <!-- 🛑 Ẩn ID chỉ khi đang sửa -->
+                    <input type="hidden" th:if="*{id != 0}" th:field="*{id}" />
 
+                    <!-- ✅ Tên người mượn không thể nhập, lấy từ người vừa đăng ký -->
                     <div class="mb-3">
                         <label class="form-label">Tên người mượn:</label>
-                        <input type="text" th:field="*{tenNguoiMuon}" class="form-control" required>
+                        <input type="text" class="form-control" th:value="${tenNguoiMoi}" readonly>
+                        <input type="hidden" th:field="*{tenNguoiMuon}" th:value="${tenNguoiMoi}" />
                     </div>
 
                     <div class="mb-3">
@@ -52,7 +55,10 @@
                         <input type="date" id="ngayTra" th:field="*{ngayTra}" class="form-control" required>
                     </div>
 
-                    <button type="submit" class="btn btn-success w-100 fw-bold">Xác nhận</button>
+                    <button type="submit"
+                            th:text="*{id != 0} ? 'Cập nhật phiếu' : 'Xác nhận'"
+                            class="btn btn-success w-100 fw-bold">
+                    </button>
                 </form>
             </div>
         </div>
