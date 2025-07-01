@@ -19,9 +19,10 @@
                 <th>Giới&nbsp;tính</th>
                 <th>Liên hệ</th>
                 <th>Tài khoản</th>
+                <th>Hành động</th>
             </tr>
         </thead>
-        <tbody th:each="nd : ${danhSachNguoiDung}">
+        <tbody th:each="nd : ${nguoiDungList}">
             <tr>
                 <td th:text="${nd.id}"></td>
                 <td th:text="${nd.hoTen}"></td>
@@ -29,11 +30,17 @@
                 <td th:text="${nd.gioiTinh}"></td>
                 <td th:text="${nd.lienHe}"></td>
                 <td th:text="${nd.taiKhoan}"></td>
+                <td class="text-center">
+                    <!-- ✅ Đã cập nhật đúng đường dẫn -->
+                    <a th:href="@{'/quan-ly/nguoi-dung/sua/' + ${nd.id}}" class="btn btn-sm btn-primary">Sửa</a>
+                    <a th:href="@{'/quan-ly/nguoi-dung/xoa/' + ${nd.id}}" class="btn btn-sm btn-danger"
+                       onclick="return confirm('Bạn có chắc muốn xoá người dùng này?');">Xoá</a>
+                </td>
             </tr>
         </tbody>
     </table>
 
-    <a href="/" class="btn btn-secondary mt-3"><i class="fas fa-arrow-left"></i> Quay lại trang chủ</a>
+    <a href="/" class="btn btn-secondary mt-3">← Quay lại trang chủ</a>
 </div>
 
 </body>
