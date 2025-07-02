@@ -25,10 +25,8 @@
                 </div>
 
                 <form th:action="@{/phieu-muon/tao}" th:object="${phieuMuonMoi}" method="post">
-                    <!-- 🛑 Ẩn ID chỉ khi đang sửa -->
                     <input type="hidden" th:if="*{id != 0}" th:field="*{id}" />
 
-                    <!-- ✅ Tên người mượn không thể nhập, lấy từ người vừa đăng ký -->
                     <div class="mb-3">
                         <label class="form-label">Tên người mượn:</label>
                         <input type="text" class="form-control" th:value="${tenNguoiMoi}" readonly>
@@ -98,36 +96,36 @@
 
                 <hr class="my-4">
 
-                <!-- Hiển thị phiếu vừa tạo -->
-                <div th:if="${phieuMoiTao != null}">
-                    <h5 class="mb-3">🗂️ Phiếu mượn vừa tạo</h5>
-                    <table class="table table-bordered table-striped">
-                        <thead class="table-secondary text-center">
-                        <tr>
-                            <th>ID</th>
-                            <th>Người mượn</th>
-                            <th>Sách</th>
-                            <th>Ngày mượn</th>
-                            <th>Ngày trả</th>
-                            <th>Hành động</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td th:text="${phieuMoiTao.id}"></td>
-                            <td th:text="${phieuMoiTao.tenNguoiMuon}"></td>
-                            <td th:text="${phieuMoiTao.tenSach}"></td>
-                            <td th:text="${phieuMoiTao.ngayMuon}"></td>
-                            <td th:text="${phieuMoiTao.ngayTra}"></td>
-                            <td>
-                                <a th:href="@{'/phieu-muon/xoa/' + ${phieuMoiTao.id}}" class="btn btn-danger btn-sm"
-                                   onclick="return confirm('Bạn chắc chắn muốn xoá phiếu này?');">Xoá</a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-
+                <!-- Luôn hiển thị bảng Phiếu mượn vừa tạo -->
+                <h5 class="mb-3">🗂️ Phiếu mượn vừa tạo</h5>
+                <table class="table table-bordered table-striped">
+                    <thead class="table-secondary text-center">
+                    <tr>
+                        <th>ID</th>
+                        <th>Người mượn</th>
+                        <th>Sách</th>
+                        <th>Ngày mượn</th>
+                        <th>Ngày trả</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${phieuMoiTao != null}">
+                        <td th:text="${phieuMoiTao.id}"></td>
+                        <td th:text="${phieuMoiTao.tenNguoiMuon}"></td>
+                        <td th:text="${phieuMoiTao.tenSach}"></td>
+                        <td th:text="${phieuMoiTao.ngayMuon}"></td>
+                        <td th:text="${phieuMoiTao.ngayTra}"></td>
+                        <td>
+                            <a th:href="@{'/phieu-muon/xoa/' + ${phieuMoiTao.id}}" class="btn btn-danger btn-sm"
+                               onclick="return confirm('Bạn chắc chắn muốn xoá phiếu này?');">Xoá</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${phieuMoiTao == null}">
+                        <td colspan="6" class="text-center text-muted">Chưa có phiếu mượn nào được tạo.</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

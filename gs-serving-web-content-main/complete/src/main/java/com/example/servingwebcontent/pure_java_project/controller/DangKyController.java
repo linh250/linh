@@ -19,7 +19,9 @@ public class DangKyController {
     // Hiển thị form đăng ký người dùng mới
     @GetMapping("/nguoidung/dangky")
     public String hienFormDangKy(Model model) {
-        model.addAttribute("nguoiDungMoi", new NguoiDung());
+        if (!model.containsAttribute("nguoiDungMoi")) {
+            model.addAttribute("nguoiDungMoi", new NguoiDung());
+        }
         return "dangky_nguoidung"; // ← View ở templates/dangky_nguoidung.html
     }
 
@@ -27,8 +29,18 @@ public class DangKyController {
     @PostMapping("/nguoidung/dangky")
     public String xuLyDangKy(@ModelAttribute("nguoiDungMoi") NguoiDung nd,
                              RedirectAttributes redirect) {
+
+        if (db.tonTaiTaiKhoan(nd.getTaiKhoan())) {
+            redirect.addFlashAttribute("nguoiDungMoi", nd);
+            redirect.addFlashAttribute("thongBao", "❌ Tài khoản đã tồn tại. Vui lòng chọn tài khoản khác.");
+            redirect.addFlashAttribute("thanhCong", false);
+            return "redirect:/nguoidung/dangky";
+        }
+
         db.themNguoiDung(nd);
         redirect.addFlashAttribute("tenNguoiMoi", nd.getHoTen());
+        redirect.addFlashAttribute("thongBao", "✅ Đăng ký thành công!");
+        redirect.addFlashAttribute("thanhCong", true);
         return "redirect:/phieu-muon/tao";
     }
 }

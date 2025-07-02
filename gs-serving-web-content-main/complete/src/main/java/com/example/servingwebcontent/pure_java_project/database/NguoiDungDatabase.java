@@ -20,6 +20,25 @@ public class NguoiDungDatabase {
     @Value("${spring.datasource.password}")
     private String jdbcPassword;
 
+    // ✅ Kiểm tra tài khoản đã tồn tại chưa
+    public boolean tonTaiTaiKhoan(String taiKhoan) {
+        String sql = "SELECT COUNT(*) FROM nguoi_dung WHERE tai_khoan = ?";
+        try (Connection c = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPassword);
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setString(1, taiKhoan);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     // 1. Thêm người dùng mới
     public long themNguoiDung(NguoiDung nd) {
         String sql = """

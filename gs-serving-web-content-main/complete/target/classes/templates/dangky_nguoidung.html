@@ -66,6 +66,12 @@
     </div>
     <h2 class="form-title">Đăng ký người dùng mới</h2>
 
+    <!-- ✅ Hiển thị thông báo nếu có -->
+    <div th:if="${thongBao}" class="alert text-center mb-4"
+         th:classappend="${thanhCong} ? 'alert-success' : 'alert-danger'">
+        <span th:text="${thongBao}"></span>
+    </div>
+
     <form th:action="@{/nguoidung/dangky}" method="post" th:object="${nguoiDungMoi}">
 
         <div class="mb-3">
