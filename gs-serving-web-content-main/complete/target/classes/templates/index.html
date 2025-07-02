@@ -3,125 +3,110 @@
 <head>
   <meta charset="UTF-8">
   <title>Hệ thống quản lý thư viện</title>
+
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
     body {
-      background: linear-gradient(135deg, #e0f7fa, #f1f8e9);
+      background: linear-gradient(135deg, #e0f7fa, #f8f9fa);
       font-family: 'Poppins', sans-serif;
-      color: #333;
     }
 
     h1 {
       font-weight: 700;
-      font-size: 2.5rem;
-      color: #2c387e;
-      margin-bottom: 3rem;
+      color: #0d6efd;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
     }
 
     .card-custom {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 1rem;
       background: white;
       border: none;
-      border-radius: 1.5rem;
-      padding: 2.5rem 1.5rem;
-      text-align: center;
-      transition: 0.4s ease-in-out;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-      position: relative;
-      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     }
 
     .card-custom:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 16px 35px rgba(0, 0, 0, 0.2);
+      transform: translateY(-8px) scale(1.035);
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.15);
     }
 
     .icon-circle {
-      width: 90px;
-      height: 90px;
-      margin: 0 auto 20px;
-      background: linear-gradient(to bottom right, #64b5f6, #1976d2);
-      color: white;
-      border-radius: 50%;
-      display: flex;
+      font-size: 2.7rem;
+      width: 70px;
+      height: 70px;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.5rem;
-      box-shadow: 0 4px 15px rgba(25, 118, 210, 0.4);
+      border-radius: 50%;
+      background: linear-gradient(145deg, #d6eaff, #ffffff);
+      box-shadow: inset 2px 2px 5px #d3d3d3, inset -2px -2px 5px #fff;
+      margin-bottom: 20px;
+      color: #0d6efd;
     }
 
     .card-title {
       font-size: 1.5rem;
-      font-weight: 600;
-      color: #0d47a1;
-      margin-bottom: 0.5rem;
+      font-weight: 700;
+      color: #343a40;
+      margin-bottom: 10px;
     }
 
     .card-text {
-      font-size: 1rem;
-      color: #555;
-      padding: 0 1rem;
+      font-size: 0.95rem;
+      color: #6c757d;
     }
 
-    a {
-      text-decoration: none;
-    }
-
-    @media (max-width: 768px) {
-      h1 {
-        font-size: 2rem;
-      }
-
-      .card-custom {
-        padding: 2rem 1rem;
-      }
+    .container {
+      max-width: 1140px;
     }
   </style>
 </head>
 <body>
 
-  <div class="container py-5">
-    <h1 class="text-center">📚 HỆ THỐNG QUẢN LÝ THƯ VIỆN</h1>
+<div class="container py-5">
+  <h1 class="text-center mb-5">📚 HỆ THỐNG QUẢN LÝ THƯ VIỆN</h1>
 
-    <div class="row g-4 justify-content-center">
+  <div class="row g-4 justify-content-center">
 
-      <!-- Quản lý người dùng -->
-      <div class="col-lg-4 col-md-6">
-        <a href="/quan-ly/nguoi-dung" class="text-dark">
-          <div class="card-custom">
-            <div class="icon-circle"><i class="fas fa-users-cog"></i></div>
-            <h2 class="card-title">Quản lý người dùng</h2>
-            <p class="card-text">Danh sách, thông tin và tài khoản người dùng.</p>
-          </div>
-        </a>
-      </div>
-
-      <!-- Quản lý phiếu mượn -->
-      <div class="col-lg-4 col-md-6">
-        <a href="/phieu-muon" class="text-dark">
-          <div class="card-custom">
-            <div class="icon-circle"><i class="fas fa-file-signature"></i></div>
-            <h2 class="card-title">Quản lý phiếu mượn</h2>
-            <p class="card-text">Tài khoản và phiếu mượn sách cho người dùng.</p>
-          </div>
-        </a>
-      </div>
-
-      <!-- Quản lý sách -->
-      <div class="col-lg-4 col-md-6">
-        <a href="/sach" class="text-dark">
-          <div class="card-custom">
-            <div class="icon-circle"><i class="fas fa-book-open"></i></div>
-            <h2 class="card-title">Quản lý sách</h2>
-            <p class="card-text">Danh mục sách</p>
-          </div>
-        </a>
-      </div>
-
+    <!-- Người Quản Lý -->
+    <div class="col-md-4 col-sm-6">
+      <a href="/quan-ly/nguoi-dung" class="text-decoration-none text-dark">
+        <div class="card card-custom text-center h-100 p-4">
+          <div class="icon-circle"><i class="fas fa-user-shield"></i></div>
+          <h2 class="card-title">Quản Lý Người Dùng</h2>
+          <p class="card-text">Danh sách , thông tin người dùng </p>
+        </div>
+      </a>
     </div>
+
+    <!-- Người Dùng -->
+    <div class="col-md-4 col-sm-6">
+      <a href="/nguoidung/dangky" class="text-decoration-none text-dark">
+        <div class="card card-custom text-center h-100 p-4">
+          <div class="icon-circle"><i class="fas fa-user-plus"></i></div>
+          <h2 class="card-title">Quản Lý Phiếu Mượn</h2>
+          <p class="card-text">Đăng ký tài khoản và tạo phiếu mượn</p>
+        </div>
+      </a>
+    </div>
+
+    <!-- Sách -->
+    <div class="col-md-4 col-sm-6">
+      <a href="/sach" class="text-decoration-none text-dark">
+        <div class="card card-custom text-center h-100 p-4">
+          <div class="icon-circle"><i class="fas fa-book"></i></div>
+          <h2 class="card-title">Quản Lý Sách</h2>
+          <p class="card-text">Danh mục sách</p>
+        </div>
+      </a>
+    </div>
+
   </div>
+</div>
 
 </body>
 </html>
