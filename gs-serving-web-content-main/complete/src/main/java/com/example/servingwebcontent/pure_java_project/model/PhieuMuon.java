@@ -10,15 +10,16 @@ public class PhieuMuon {
     private String tenSach;
     private String tacGia;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")  // ✅ Giúp Spring hiểu đúng định dạng ngày
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate ngayMuon;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")  // ✅ Giúp Spring hiểu đúng định dạng ngày
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate ngayTra;
 
     private boolean daTra;
 
-    private long nguoiDungId;  // ✅ Mã người dùng mượn sách
+ 
+    private Long nguoiDungId;
 
     public PhieuMuon() {
         this.ngayMuon = LocalDate.now();
@@ -46,6 +47,6 @@ public class PhieuMuon {
     public boolean isDaTra() { return daTra; }
     public void setDaTra(boolean daTra) { this.daTra = daTra; }
 
-    public long getNguoiDungId() { return nguoiDungId; }
-    public void setNguoiDungId(long nguoiDungId) { this.nguoiDungId = nguoiDungId; }
+    public Long getNguoiDungId() { return nguoiDungId; }
+    public void setNguoiDungId(Long nguoiDungId) { this.nguoiDungId = nguoiDungId; }
 }

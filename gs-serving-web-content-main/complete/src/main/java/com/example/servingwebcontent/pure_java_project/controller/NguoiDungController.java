@@ -1,12 +1,15 @@
 package com.example.servingwebcontent.pure_java_project.controller;
 
 import com.example.servingwebcontent.pure_java_project.database.NguoiDungDatabase;
+import com.example.servingwebcontent.pure_java_project.database.PhieuMuonDatabase;
 import com.example.servingwebcontent.pure_java_project.model.NguoiDung;
+import com.example.servingwebcontent.pure_java_project.model.PhieuMuon;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -14,12 +17,14 @@ import java.util.List;
 public class NguoiDungController {
 
     private final NguoiDungDatabase db;
+    private final PhieuMuonDatabase phieuMuonDB;
 
-    public NguoiDungController(NguoiDungDatabase db) {
+    public NguoiDungController(NguoiDungDatabase db, PhieuMuonDatabase phieuMuonDB) {
         this.db = db;
+        this.phieuMuonDB = phieuMuonDB;
     }
 
-    // 1. Form đăng ký
+    // 1. Hiển thị form đăng ký người dùng
     @GetMapping("/dangky")
     public String hienFormDangKy(Model model) {
         model.addAttribute("nguoiDungMoi", new NguoiDung());
@@ -31,19 +36,32 @@ public class NguoiDungController {
     public String xuLyDangKy(@ModelAttribute("nguoiDungMoi") NguoiDung nd,
                              RedirectAttributes redirect) {
         db.themNguoiDung(nd);
-        redirect.addFlashAttribute("tenNguoiMoi", nd.getHoTen());
+
+        // ✅ Sau khi đăng ký thì tạo trước 1 phiếu mượn với tên người vừa tạo
+        PhieuMuon phieu = new PhieuMuon();
+        phieu.setNguoiDungId(nd.getId());
+        phieu.setTenNguoiMuon(nd.getHoTen());
+        phieu.setNgayMuon(LocalDate.now());
+        phieu.setNgayTra(LocalDate.now().plusDays(7));
+
+        redirect.addFlashAttribute("thongBao", "✅ Đăng ký thành công cho " + nd.getHoTen());
+        redirect.addFlashAttribute("thanhCong", true);
+        redirect.addFlashAttribute("phieuMuonMoi", phieu); // ✅ truyền luôn object
+
         return "redirect:/phieu-muon/tao";
     }
 
-    // 3. Danh sách người dùng – mặc định
+    // 3. Danh sách người dùng
     @GetMapping("")
-    public String hienThiDanhSachNguoiDung(Model model) {
+    public String hienThiDanhSachNguoiDung(Model model,
+                                           @ModelAttribute("thongBao") String thongBao) {
         List<NguoiDung> list = db.layTatCaNguoiDung();
         model.addAttribute("nguoiDungList", list);
+        model.addAttribute("thongBao", thongBao);
         return "quanly_nguoidung";
     }
 
-    // ✅ 3.1. Tìm kiếm người dùng
+    // 3.1 Tìm kiếm người dùng
     @GetMapping("/tim-kiem")
     public String timKiemNguoiDung(@RequestParam("keyword") String keyword, Model model) {
         List<NguoiDung> ketQua = db.timKiemNguoiDung(keyword);
@@ -52,14 +70,15 @@ public class NguoiDungController {
         return "quanly_nguoidung";
     }
 
-    // 4. Xoá người dùng
+    // 4. Xoá người dùng (cho phép xoá kể cả khi có phiếu mượn)
     @GetMapping("/xoa/{id}")
-    public String xoaNguoiDung(@PathVariable("id") long id) {
+    public String xoaNguoiDung(@PathVariable("id") long id, RedirectAttributes redirect) {
         db.xoaNguoiDung(id);
+        redirect.addFlashAttribute("thongBao", "✅ Đã xoá người dùng thành công.");
         return "redirect:/quan-ly/nguoi-dung";
     }
 
-    // 5. Hiển thị form sửa người dùng
+    // 5. Hiển thị form sửa
     @GetMapping("/sua/{id}")
     public String hienFormSua(@PathVariable("id") long id, Model model) {
         NguoiDung nd = db.layNguoiDungTheoId(id);
@@ -71,10 +90,25 @@ public class NguoiDungController {
         }
     }
 
-    // 6. Xử lý sửa
+    // 6. Xử lý cập nhật người dùng
     @PostMapping("/sua")
-    public String xuLySua(@ModelAttribute("nguoiDungSua") NguoiDung nd) {
+    public String xuLySua(@ModelAttribute("nguoiDungSua") NguoiDung nd, RedirectAttributes redirect) {
         db.capNhatNguoiDung(nd);
+        redirect.addFlashAttribute("thongBao", "✅ Đã cập nhật thông tin người dùng.");
         return "redirect:/quan-ly/nguoi-dung";
+    }
+
+    // 7. Thông tin người dùng + phiếu mượn
+    @GetMapping("/thong-tin/{id}")
+    public String xemThongTinNguoiDung(@PathVariable long id, Model model) {
+        NguoiDung nd = db.layNguoiDungTheoId(id);
+        if (nd == null) {
+            return "redirect:/quan-ly/nguoi-dung";
+        }
+
+        List<PhieuMuon> danhSach = phieuMuonDB.layPhieuMuonTheoNguoiDung(id);
+        model.addAttribute("nguoiDung", nd);
+        model.addAttribute("danhSachPhieu", danhSach);
+        return "thongtin_nguoidung";
     }
 }

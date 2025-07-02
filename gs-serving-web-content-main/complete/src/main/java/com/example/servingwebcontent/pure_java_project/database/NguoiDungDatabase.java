@@ -88,6 +88,22 @@ public class NguoiDungDatabase {
         return null;
     }
 
+    // 🔍 ✅ Tìm người dùng theo họ tên (phục vụ tạo phiếu mượn)
+    public NguoiDung timTheoTen(String ten) {
+        String sql = "SELECT * FROM nguoi_dung WHERE ho_ten = ?";
+        try (Connection c = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPassword);
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setString(1, ten);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return mapRow(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // 3. Lấy toàn bộ người dùng
     public List<NguoiDung> layTatCaNguoiDung() {
         List<NguoiDung> list = new ArrayList<>();
@@ -101,6 +117,11 @@ public class NguoiDungDatabase {
             e.printStackTrace();
         }
         return list;
+    }
+
+    // 🆕 Trả về danh sách người dùng (rút gọn tên rõ ràng)
+    public List<NguoiDung> layDanhSachNguoiDung() {
+        return layTatCaNguoiDung();
     }
 
     // 4. Xoá người dùng theo id
@@ -141,7 +162,7 @@ public class NguoiDungDatabase {
         }
     }
 
-    // 6. Tìm kiếm người dùng theo từ khoá (tên, tài khoản, liên hệ)
+    // 6. Tìm kiếm người dùng theo từ khoá
     public List<NguoiDung> timKiemNguoiDung(String keyword) {
         List<NguoiDung> ketQua = new ArrayList<>();
         String sql = """

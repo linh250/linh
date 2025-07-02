@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông tin người dùng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>👤 Thông tin người dùng</h2>
+        <a th:href="@{/quan-ly/nguoi-dung}" class="btn btn-outline-secondary">← Quay lại danh sách</a>
+    </div>
+
+    <!-- Thông tin người dùng -->
+    <div class="mb-4 p-3 bg-light border rounded">
+        <p><strong>Họ tên:</strong> <span th:text="${nguoiDung.hoTen}"></span></p>
+        <p><strong>Tuổi:</strong> <span th:text="${nguoiDung.tuoi}"></span></p>
+        <p><strong>Giới tính:</strong> <span th:text="${nguoiDung.gioiTinh}"></span></p>
+        <p><strong>Liên hệ:</strong> <span th:text="${nguoiDung.lienHe}"></span></p>
+        <p><strong>Tài khoản:</strong> <span th:text="${nguoiDung.taiKhoan}"></span></p>
+    </div>
+
+    <!-- Danh sách phiếu mượn -->
+    <h4>📚 Danh sách phiếu mượn</h4>
+    <table class="table table-bordered table-striped">
+        <thead class="table-primary text-center">
+        <tr>
+            <th>#</th>
+            <th>Tên sách</th>
+            <th>Tác giả</th>
+            <th>Ngày mượn</th>
+            <th>Ngày trả</th>
+            <th>Đã trả</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Nếu không có phiếu mượn -->
+        <tr th:if="${#lists.isEmpty(danhSachPhieu)}">
+            <td colspan="6" class="text-center text-muted">Người dùng này chưa có phiếu mượn nào.</td>
+        </tr>
+
+        <!-- Nếu có phiếu mượn -->
+        <tr th:each="phieu : ${danhSachPhieu}">
+            <td th:text="${phieu.id}"></td>
+            <td th:text="${phieu.tenSach}"></td>
+            <td th:text="${phieu.tacGia}"></td>
+            <td th:text="${phieu.ngayMuon}"></td>
+            <td th:text="${phieu.ngayTra}"></td>
+            <td class="text-center" th:text="${phieu.daTra ? '✅' : '❌'}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="/" class="btn btn-secondary mt-3">🏠 Quay về trang chủ</a>
+</div>
+</body>
+</html>

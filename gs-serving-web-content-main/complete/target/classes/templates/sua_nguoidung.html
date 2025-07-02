@@ -9,10 +9,10 @@
 
     <h2 class="mb-4 text-primary">✏️ Sửa thông tin người dùng</h2>
 
-    <!-- ✅ Sửa đường dẫn action -->
+    <!-- ✅ Action sửa người dùng -->
     <form th:action="@{/quan-ly/nguoi-dung/sua}" method="post" th:object="${nguoiDungSua}" class="border p-4 rounded shadow-sm bg-light">
 
-        <!-- Ẩn id -->
+        <!-- ID ẩn -->
         <input type="hidden" th:field="*{id}" />
 
         <div class="mb-3">
@@ -58,8 +58,8 @@
 
         <button type="submit" class="btn btn-success">💾 Lưu thay đổi</button>
 
-        <!-- ✅ Sửa link quay lại -->
-        <a th:href="@{/quan-ly/nguoi-dung/danh-sach}" class="btn btn-secondary">↩️ Quay lại</a>
+        <!-- ✅ Đường dẫn quay lại đúng -->
+        <a th:href="@{/quan-ly/nguoi-dung}" class="btn btn-secondary">↩️ Quay lại</a>
     </form>
 
 </body>

@@ -72,7 +72,8 @@
         <span th:text="${thongBao}"></span>
     </div>
 
-    <form th:action="@{/nguoidung/dangky}" method="post" th:object="${nguoiDungMoi}">
+    <!-- ✅ Đúng action theo controller -->
+    <form th:action="@{/quan-ly/nguoi-dung/dangky}" method="post" th:object="${nguoiDungMoi}">
 
         <div class="mb-3">
             <label class="form-label">Họ tên</label>

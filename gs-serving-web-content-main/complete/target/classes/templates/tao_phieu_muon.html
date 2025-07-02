@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
     <meta charset="UTF-8">
     <title>Tạo Phiếu Mượn</title>
@@ -27,10 +27,11 @@
                 <form th:action="@{/phieu-muon/tao}" th:object="${phieuMuonMoi}" method="post">
                     <input type="hidden" th:if="*{id != 0}" th:field="*{id}" />
 
+                    <!-- ✅ Hiển thị tên người mượn (readonly) và ẩn ID -->
                     <div class="mb-3">
-                        <label class="form-label">Tên người mượn:</label>
-                        <input type="text" class="form-control" th:value="${tenNguoiMoi}" readonly>
-                        <input type="hidden" th:field="*{tenNguoiMuon}" th:value="${tenNguoiMoi}" />
+                        <label class="form-label">Người mượn:</label>
+                        <input type="text" class="form-control" th:value="*{tenNguoiMuon}" readonly />
+                        <input type="hidden" th:field="*{nguoiDungId}" />
                     </div>
 
                     <div class="mb-3">
@@ -76,9 +77,9 @@
                     </thead>
                     <tbody>
                     <tr th:each="sach : ${danhSachChuaMuon}">
-                        <td th:text="${sach.id}">1</td>
-                        <td th:text="${sach.ten}">Tên</td>
-                        <td th:text="${sach.tacGia}">Tác giả</td>
+                        <td th:text="${sach.id}"></td>
+                        <td th:text="${sach.ten}"></td>
+                        <td th:text="${sach.tacGia}"></td>
                         <td>
                             <button type="button"
                                     class="btn btn-outline-primary btn-sm"
@@ -96,7 +97,7 @@
 
                 <hr class="my-4">
 
-                <!-- Luôn hiển thị bảng Phiếu mượn vừa tạo -->
+                <!-- Hiển thị phiếu mượn vừa tạo -->
                 <h5 class="mb-3">🗂️ Phiếu mượn vừa tạo</h5>
                 <table class="table table-bordered table-striped">
                     <thead class="table-secondary text-center">
@@ -131,6 +132,7 @@
     </div>
 </div>
 
+<!-- Script chọn sách -->
 <script>
     function chonSach(button) {
         const ten = button.getAttribute('data-ten');
