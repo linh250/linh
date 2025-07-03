@@ -171,7 +171,6 @@
 
         ngayMuonInput.dispatchEvent(new Event('change'));
 
-        // 🔍 Tìm kiếm trong danh sách sách
         document.getElementById("searchSach").addEventListener("input", function () {
             const filter = this.value.toLowerCase();
             const rows = document.querySelectorAll("#bang-sach tbody tr");
