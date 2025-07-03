@@ -72,6 +72,14 @@ public class PhieuMuonController {
             redirect.addFlashAttribute("thanhCong", false);
             redirect.addFlashAttribute("phieuMuonMoi", phieu);
         } else {
+            // ✅ Kiểm tra null trước khi gọi .longValue()
+            if (phieu.getNguoiDungId() == null) {
+                redirect.addFlashAttribute("thongBao", "❌ Bạn chưa chọn người mượn.");
+                redirect.addFlashAttribute("thanhCong", false);
+                redirect.addFlashAttribute("phieuMuonMoi", phieu);
+                return "redirect:/phieu-muon/tao";
+            }
+
             // ✅ Lấy thông tin người dùng và gán tên + ID
             NguoiDung nguoiDung = nguoiDungDatabase.layNguoiDungTheoId(phieu.getNguoiDungId());
             if (nguoiDung != null) {
