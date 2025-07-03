@@ -27,7 +27,6 @@
                 <form th:action="@{/phieu-muon/tao}" th:object="${phieuMuonMoi}" method="post">
                     <input type="hidden" th:if="*{id != 0}" th:field="*{id}" />
 
-                    <!-- ✅ Hiển thị tên người mượn (readonly) và ẩn ID -->
                     <div class="mb-3">
                         <label class="form-label">Người mượn:</label>
                         <input type="text" class="form-control" th:value="*{tenNguoiMuon}" readonly />
@@ -66,7 +65,11 @@
         <div class="col-md-6">
             <div class="bg-white p-4 rounded shadow ms-md-4 mt-4 mt-md-0">
                 <h5 class="mb-3">📚 Chọn Sách Chưa Mượn</h5>
-                <table class="table table-hover">
+
+                <!-- 🔍 THANH TÌM KIẾM -->
+                <input type="text" id="searchSach" class="form-control mb-3" placeholder="🔍 Tìm sách theo tên hoặc tác giả...">
+
+                <table class="table table-hover" id="bang-sach">
                     <thead class="table-dark">
                     <tr>
                         <th>ID</th>
@@ -97,7 +100,6 @@
 
                 <hr class="my-4">
 
-                <!-- Hiển thị phiếu mượn vừa tạo -->
                 <h5 class="mb-3">🗂️ Phiếu mượn vừa tạo</h5>
                 <table class="table table-bordered table-striped">
                     <thead class="table-secondary text-center">
@@ -132,7 +134,7 @@
     </div>
 </div>
 
-<!-- Script chọn sách -->
+<!-- Script -->
 <script>
     function chonSach(button) {
         const ten = button.getAttribute('data-ten');
@@ -168,6 +170,17 @@
         });
 
         ngayMuonInput.dispatchEvent(new Event('change'));
+
+        // 🔍 Tìm kiếm trong danh sách sách
+        document.getElementById("searchSach").addEventListener("input", function () {
+            const filter = this.value.toLowerCase();
+            const rows = document.querySelectorAll("#bang-sach tbody tr");
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(filter) ? "" : "none";
+            });
+        });
     });
 </script>
 
