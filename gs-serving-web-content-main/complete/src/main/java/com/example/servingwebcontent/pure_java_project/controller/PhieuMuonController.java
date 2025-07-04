@@ -40,7 +40,7 @@ public class PhieuMuonController {
         if (!model.containsAttribute("phieuMuonMoi")) {
             PhieuMuon phieu = new PhieuMuon();
 
-            // ✅ Nếu vừa đăng ký thì gán sẵn thông tin người mượn
+            // ✅ Nếu vừa đăng ký hoặc vừa xoá thì gán sẵn thông tin người mượn
             if (tenNguoiMoi != null && !tenNguoiMoi.isEmpty() && idNguoiMoi != null) {
                 phieu.setTenNguoiMuon(tenNguoiMoi);
                 phieu.setNguoiDungId(idNguoiMoi);
@@ -130,8 +130,22 @@ public class PhieuMuonController {
     }
 
     @GetMapping("/xoa/{id}")
-    public String xoaPhieu(@PathVariable int id) {
-        database.xoaPhieuMuon(id);
+    public String xoaPhieu(@PathVariable int id, RedirectAttributes redirect) {
+        PhieuMuon phieu = database.layPhieuMuonTheoId(id);
+
+        if (phieu != null) {
+            Long idNguoi = phieu.getNguoiDungId();
+            String tenNguoi = phieu.getTenNguoiMuon();
+
+            database.xoaPhieuMuon(id);
+
+            // ✅ Giữ lại người mượn để hiển thị lại trên form
+            redirect.addFlashAttribute("tenNguoiMoi", tenNguoi);
+            redirect.addFlashAttribute("idNguoiMoi", idNguoi);
+            redirect.addFlashAttribute("thongBao", "✅ Đã xoá phiếu mượn!");
+            redirect.addFlashAttribute("thanhCong", true);
+        }
+
         return "redirect:/phieu-muon/tao";
     }
 
