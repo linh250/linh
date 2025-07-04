@@ -27,15 +27,25 @@ public class NguoiDungController {
     // 1. Hiển thị form đăng ký người dùng
     @GetMapping("/dangky")
     public String hienFormDangKy(Model model) {
-        model.addAttribute("nguoiDungMoi", new NguoiDung());
+        if (!model.containsAttribute("nguoiDungMoi")) {
+            model.addAttribute("nguoiDungMoi", new NguoiDung());
+        }
         return "dangky_nguoidung";
     }
 
-    // 2. Xử lý đăng ký
+    // 2. Xử lý đăng ký (có kiểm tra trùng tài khoản)
     @PostMapping("/dangky")
     public String xuLyDangKy(@ModelAttribute("nguoiDungMoi") NguoiDung nd,
                              RedirectAttributes redirect) {
-        db.themNguoiDung(nd);
+
+        boolean thanhCong = db.themNguoiDung(nd); // sẽ trả false nếu trùng tài khoản
+
+        if (!thanhCong) {
+            redirect.addFlashAttribute("thongBao", "❌ Tài khoản đã tồn tại. Vui lòng chọn tài khoản khác.");
+            redirect.addFlashAttribute("thanhCong", false);
+            redirect.addFlashAttribute("nguoiDungMoi", nd); // giữ lại thông tin đã nhập
+            return "redirect:/quan-ly/nguoi-dung/dangky";
+        }
 
         // ✅ Sau khi đăng ký thì tạo trước 1 phiếu mượn với tên người vừa tạo
         PhieuMuon phieu = new PhieuMuon();
@@ -46,7 +56,7 @@ public class NguoiDungController {
 
         redirect.addFlashAttribute("thongBao", "✅ Đăng ký thành công cho " + nd.getHoTen());
         redirect.addFlashAttribute("thanhCong", true);
-        redirect.addFlashAttribute("phieuMuonMoi", phieu); // ✅ truyền luôn object
+        redirect.addFlashAttribute("phieuMuonMoi", phieu); // truyền luôn object
 
         return "redirect:/phieu-muon/tao";
     }
@@ -70,7 +80,7 @@ public class NguoiDungController {
         return "quanly_nguoidung";
     }
 
-    // 4. Xoá người dùng (cho phép xoá kể cả khi có phiếu mượn)
+    // 4. Xoá người dùng
     @GetMapping("/xoa/{id}")
     public String xoaNguoiDung(@PathVariable("id") long id, RedirectAttributes redirect) {
         db.xoaNguoiDung(id);

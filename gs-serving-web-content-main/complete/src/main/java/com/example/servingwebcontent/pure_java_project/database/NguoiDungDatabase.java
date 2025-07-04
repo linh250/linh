@@ -39,8 +39,13 @@ public class NguoiDungDatabase {
         return false;
     }
 
-    // 1. Thêm người dùng mới
-    public long themNguoiDung(NguoiDung nd) {
+    // ✅ 1. Thêm người dùng mới (trả về true/false thay vì long)
+    public boolean themNguoiDung(NguoiDung nd) {
+        // Kiểm tra tài khoản đã tồn tại
+        if (tonTaiTaiKhoan(nd.getTaiKhoan())) {
+            return false;
+        }
+
         String sql = """
             INSERT INTO nguoi_dung
               (ho_ten, tuoi, gioi_tinh, lien_he, tai_khoan, mat_khau)
@@ -61,15 +66,15 @@ public class NguoiDungDatabase {
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
-                    long id = rs.getLong(1);
-                    nd.setId(id);
-                    return id;
+                    nd.setId(rs.getLong(1)); // gán id lại
+                    return true;
                 }
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return -1;
+        return false;
     }
 
     // 2. Lấy người dùng theo id
@@ -88,7 +93,7 @@ public class NguoiDungDatabase {
         return null;
     }
 
-    // 🔍 ✅ Tìm người dùng theo họ tên (phục vụ tạo phiếu mượn)
+    // 🔍 Tìm người dùng theo họ tên
     public NguoiDung timTheoTen(String ten) {
         String sql = "SELECT * FROM nguoi_dung WHERE ho_ten = ?";
         try (Connection c = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPassword);
@@ -117,11 +122,6 @@ public class NguoiDungDatabase {
             e.printStackTrace();
         }
         return list;
-    }
-
-    // 🆕 Trả về danh sách người dùng (rút gọn tên rõ ràng)
-    public List<NguoiDung> layDanhSachNguoiDung() {
-        return layTatCaNguoiDung();
     }
 
     // 4. Xoá người dùng theo id
@@ -162,7 +162,7 @@ public class NguoiDungDatabase {
         }
     }
 
-    // 6. Tìm kiếm người dùng theo từ khoá
+    // 6. Tìm kiếm người dùng
     public List<NguoiDung> timKiemNguoiDung(String keyword) {
         List<NguoiDung> ketQua = new ArrayList<>();
         String sql = """
@@ -187,7 +187,7 @@ public class NguoiDungDatabase {
         return ketQua;
     }
 
-    // helper: map ResultSet -> NguoiDung
+    // map row → NguoiDung
     private NguoiDung mapRow(ResultSet rs) throws SQLException {
         NguoiDung nd = new NguoiDung();
         nd.setId       (rs.getLong("id"));

@@ -33,24 +33,27 @@ public class PhieuMuonController {
 
     @GetMapping("/tao")
     public String hienThiFormTao(Model model,
-                                 @ModelAttribute("tenNguoiMoi") String tenNguoiMoi) {
+                                 @ModelAttribute("tenNguoiMoi") String tenNguoiMoi,
+                                 @ModelAttribute("idNguoiMoi") String idNguoiMoiStr) {
 
-        Long idNguoiMoi = (Long) model.asMap().get("idNguoiMoi");
+        Long idNguoiMoi = null;
+        try {
+            if (idNguoiMoiStr != null && !idNguoiMoiStr.isEmpty()) {
+                idNguoiMoi = Long.parseLong(idNguoiMoiStr);
+            }
+        } catch (NumberFormatException ignored) {}
 
         if (!model.containsAttribute("phieuMuonMoi")) {
             PhieuMuon phieu = new PhieuMuon();
-
-            // ✅ Nếu vừa đăng ký hoặc vừa xoá thì gán sẵn thông tin người mượn
             if (tenNguoiMoi != null && !tenNguoiMoi.isEmpty() && idNguoiMoi != null) {
                 phieu.setTenNguoiMuon(tenNguoiMoi);
                 phieu.setNguoiDungId(idNguoiMoi);
             }
-
             model.addAttribute("phieuMuonMoi", phieu);
         }
 
         model.addAttribute("danhSachChuaMuon", sachDatabase.laySachChuaMuon());
-        model.addAttribute("danhSachNguoiDung", nguoiDungDatabase.layDanhSachNguoiDung());
+        model.addAttribute("danhSachNguoiDung", nguoiDungDatabase.layTatCaNguoiDung()); // 👈 sửa chỗ này
 
         return "tao_phieu_muon";
     }
@@ -72,7 +75,6 @@ public class PhieuMuonController {
             redirect.addFlashAttribute("thanhCong", false);
             redirect.addFlashAttribute("phieuMuonMoi", phieu);
         } else {
-            // ✅ Kiểm tra null trước khi gọi .longValue()
             if (phieu.getNguoiDungId() == null) {
                 redirect.addFlashAttribute("thongBao", "❌ Bạn chưa chọn người mượn.");
                 redirect.addFlashAttribute("thanhCong", false);
@@ -80,7 +82,6 @@ public class PhieuMuonController {
                 return "redirect:/phieu-muon/tao";
             }
 
-            // ✅ Lấy thông tin người dùng và gán tên + ID
             NguoiDung nguoiDung = nguoiDungDatabase.layNguoiDungTheoId(phieu.getNguoiDungId());
             if (nguoiDung != null) {
                 phieu.setTenNguoiMuon(nguoiDung.getHoTen());
@@ -95,7 +96,6 @@ public class PhieuMuonController {
                 redirect.addFlashAttribute("thongBao", "✅ Cập nhật phiếu thành công!");
             }
 
-            // ✅ Cập nhật trạng thái đã mượn cho sách
             for (Sach s : sachDatabase.layDanhSachSach()) {
                 if (s.getTen().equalsIgnoreCase(phieu.getTenSach()) &&
                         s.getTacGia().equalsIgnoreCase(phieu.getTacGia())) {
@@ -122,7 +122,7 @@ public class PhieuMuonController {
         model.addAttribute("phieuMuonMoi", phieu);
         model.addAttribute("phieuMoiTao", phieu);
         model.addAttribute("danhSachChuaMuon", sachDatabase.laySachChuaMuon());
-        model.addAttribute("danhSachNguoiDung", nguoiDungDatabase.layDanhSachNguoiDung());
+        model.addAttribute("danhSachNguoiDung", nguoiDungDatabase.layTatCaNguoiDung()); // 👈 sửa chỗ này
         model.addAttribute("thongBao", "Sẵn sàng sửa phiếu.");
         model.addAttribute("thanhCong", true);
 
@@ -139,9 +139,8 @@ public class PhieuMuonController {
 
             database.xoaPhieuMuon(id);
 
-            // ✅ Giữ lại người mượn để hiển thị lại trên form
             redirect.addFlashAttribute("tenNguoiMoi", tenNguoi);
-            redirect.addFlashAttribute("idNguoiMoi", idNguoi);
+            redirect.addFlashAttribute("idNguoiMoi", String.valueOf(idNguoi));
             redirect.addFlashAttribute("thongBao", "✅ Đã xoá phiếu mượn!");
             redirect.addFlashAttribute("thanhCong", true);
         }
