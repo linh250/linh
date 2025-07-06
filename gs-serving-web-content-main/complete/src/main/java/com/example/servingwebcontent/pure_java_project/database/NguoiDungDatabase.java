@@ -20,7 +20,7 @@ public class NguoiDungDatabase {
     @Value("${spring.datasource.password}")
     private String jdbcPassword;
 
-    // ✅ Kiểm tra tài khoản đã tồn tại chưa
+    //  Kiểm tra tài khoản đã tồn tại chưa
     public boolean tonTaiTaiKhoan(String taiKhoan) {
         String sql = "SELECT COUNT(*) FROM nguoi_dung WHERE tai_khoan = ?";
         try (Connection c = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPassword);
