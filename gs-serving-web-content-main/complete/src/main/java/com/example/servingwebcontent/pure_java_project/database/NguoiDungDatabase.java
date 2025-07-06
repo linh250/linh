@@ -39,9 +39,9 @@ public class NguoiDungDatabase {
         return false;
     }
 
-    // ✅ 1. Thêm người dùng mới (trả về true/false thay vì long)
+    
     public boolean themNguoiDung(NguoiDung nd) {
-        // Kiểm tra tài khoản đã tồn tại
+        
         if (tonTaiTaiKhoan(nd.getTaiKhoan())) {
             return false;
         }
