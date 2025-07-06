@@ -41,13 +41,13 @@ public class NguoiDungController {
         boolean thanhCong = db.themNguoiDung(nd); // sẽ trả false nếu trùng tài khoản
 
         if (!thanhCong) {
-            redirect.addFlashAttribute("thongBao", "❌ Tài khoản đã tồn tại. Vui lòng chọn tài khoản khác.");
+            redirect.addFlashAttribute("thongBao", " Tài khoản đã tồn tại. Vui lòng chọn tài khoản khác.");
             redirect.addFlashAttribute("thanhCong", false);
             redirect.addFlashAttribute("nguoiDungMoi", nd); // giữ lại thông tin đã nhập
             return "redirect:/quan-ly/nguoi-dung/dangky";
         }
 
-        // ✅ Sau khi đăng ký thì tạo trước 1 phiếu mượn với tên người vừa tạo
+        
         PhieuMuon phieu = new PhieuMuon();
         phieu.setNguoiDungId(nd.getId());
         phieu.setTenNguoiMuon(nd.getHoTen());
@@ -56,7 +56,7 @@ public class NguoiDungController {
 
         redirect.addFlashAttribute("thongBao", "✅ Đăng ký thành công cho " + nd.getHoTen());
         redirect.addFlashAttribute("thanhCong", true);
-        redirect.addFlashAttribute("phieuMuonMoi", phieu); // truyền luôn object
+        redirect.addFlashAttribute("phieuMuonMoi", phieu); 
 
         return "redirect:/phieu-muon/tao";
     }

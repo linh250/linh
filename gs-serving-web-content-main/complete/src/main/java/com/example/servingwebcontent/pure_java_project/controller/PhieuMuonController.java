@@ -53,7 +53,7 @@ public class PhieuMuonController {
         }
 
         model.addAttribute("danhSachChuaMuon", sachDatabase.laySachChuaMuon());
-        model.addAttribute("danhSachNguoiDung", nguoiDungDatabase.layTatCaNguoiDung()); // 👈 sửa chỗ này
+        model.addAttribute("danhSachNguoiDung", nguoiDungDatabase.layTatCaNguoiDung()); 
 
         return "tao_phieu_muon";
     }
@@ -122,7 +122,7 @@ public class PhieuMuonController {
         model.addAttribute("phieuMuonMoi", phieu);
         model.addAttribute("phieuMoiTao", phieu);
         model.addAttribute("danhSachChuaMuon", sachDatabase.laySachChuaMuon());
-        model.addAttribute("danhSachNguoiDung", nguoiDungDatabase.layTatCaNguoiDung()); // 👈 sửa chỗ này
+        model.addAttribute("danhSachNguoiDung", nguoiDungDatabase.layTatCaNguoiDung()); 
         model.addAttribute("thongBao", "Sẵn sàng sửa phiếu.");
         model.addAttribute("thanhCong", true);
 
