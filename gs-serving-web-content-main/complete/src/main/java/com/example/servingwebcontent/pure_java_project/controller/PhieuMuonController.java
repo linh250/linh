@@ -53,7 +53,7 @@ public class PhieuMuonController {
         }
 
         model.addAttribute("danhSachChuaMuon", sachDatabase.laySachChuaMuon());
-        model.addAttribute("danhSachNguoiDung", nguoiDungDatabase.layTatCaNguoiDung()); 
+        model.addAttribute("danhSachNguoiDung", nguoiDungDatabase.layTatCaNguoiDung());
 
         return "tao_phieu_muon";
     }
@@ -122,7 +122,7 @@ public class PhieuMuonController {
         model.addAttribute("phieuMuonMoi", phieu);
         model.addAttribute("phieuMoiTao", phieu);
         model.addAttribute("danhSachChuaMuon", sachDatabase.laySachChuaMuon());
-        model.addAttribute("danhSachNguoiDung", nguoiDungDatabase.layTatCaNguoiDung()); 
+        model.addAttribute("danhSachNguoiDung", nguoiDungDatabase.layTatCaNguoiDung());
         model.addAttribute("thongBao", "Sẵn sàng sửa phiếu.");
         model.addAttribute("thanhCong", true);
 
@@ -136,6 +136,16 @@ public class PhieuMuonController {
         if (phieu != null) {
             Long idNguoi = phieu.getNguoiDungId();
             String tenNguoi = phieu.getTenNguoiMuon();
+
+            // ✅ Cập nhật lại trạng thái sách trước khi xoá phiếu
+            for (Sach s : sachDatabase.layDanhSachSach()) {
+                if (s.getTen().equalsIgnoreCase(phieu.getTenSach()) &&
+                    s.getTacGia().equalsIgnoreCase(phieu.getTacGia())) {
+                    s.setDaMuon(false);
+                    sachDatabase.capNhatSach(s);
+                    break;
+                }
+            }
 
             database.xoaPhieuMuon(id);
 
