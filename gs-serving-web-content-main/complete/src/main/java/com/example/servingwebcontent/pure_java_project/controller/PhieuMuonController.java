@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -32,20 +33,13 @@ public class PhieuMuonController {
     }
 
     @GetMapping("/tao")
-    public String hienThiFormTao(Model model,
-                                 @ModelAttribute("tenNguoiMoi") String tenNguoiMoi,
-                                 @ModelAttribute("idNguoiMoi") String idNguoiMoiStr) {
-
-        Long idNguoiMoi = null;
-        try {
-            if (idNguoiMoiStr != null && !idNguoiMoiStr.isEmpty()) {
-                idNguoiMoi = Long.parseLong(idNguoiMoiStr);
-            }
-        } catch (NumberFormatException ignored) {}
+    public String hienThiFormTao(Model model, HttpSession session) {
+        String tenNguoiMoi = (String) session.getAttribute("tenNguoiDung");
+        Long idNguoiMoi = (Long) session.getAttribute("nguoiDungId");
 
         if (!model.containsAttribute("phieuMuonMoi")) {
             PhieuMuon phieu = new PhieuMuon();
-            if (tenNguoiMoi != null && !tenNguoiMoi.isEmpty() && idNguoiMoi != null) {
+            if (tenNguoiMoi != null && idNguoiMoi != null) {
                 phieu.setTenNguoiMuon(tenNguoiMoi);
                 phieu.setNguoiDungId(idNguoiMoi);
             }
@@ -61,7 +55,8 @@ public class PhieuMuonController {
     @PostMapping("/tao")
     public String xuLyPhieu(
             @ModelAttribute("phieuMuonMoi") PhieuMuon phieu,
-            RedirectAttributes redirect
+            RedirectAttributes redirect,
+            HttpSession session
     ) {
         boolean dangSua = phieu.getId() != 0;
 
@@ -76,16 +71,17 @@ public class PhieuMuonController {
             redirect.addFlashAttribute("phieuMuonMoi", phieu);
         } else {
             if (phieu.getNguoiDungId() == null) {
-                redirect.addFlashAttribute("thongBao", "❌ Bạn chưa chọn người mượn.");
-                redirect.addFlashAttribute("thanhCong", false);
-                redirect.addFlashAttribute("phieuMuonMoi", phieu);
-                return "redirect:/phieu-muon/tao";
-            }
-
-            NguoiDung nguoiDung = nguoiDungDatabase.layNguoiDungTheoId(phieu.getNguoiDungId());
-            if (nguoiDung != null) {
-                phieu.setTenNguoiMuon(nguoiDung.getHoTen());
-                phieu.setNguoiDungId(nguoiDung.getId());
+                Long nguoiDungId = (Long) session.getAttribute("nguoiDungId");
+                String tenNguoiDung = (String) session.getAttribute("tenNguoiDung");
+                if (nguoiDungId != null && tenNguoiDung != null) {
+                    phieu.setNguoiDungId(nguoiDungId);
+                    phieu.setTenNguoiMuon(tenNguoiDung);
+                } else {
+                    redirect.addFlashAttribute("thongBao", "❌ Bạn chưa chọn người mượn.");
+                    redirect.addFlashAttribute("thanhCong", false);
+                    redirect.addFlashAttribute("phieuMuonMoi", phieu);
+                    return "redirect:/phieu-muon/tao";
+                }
             }
 
             if (!dangSua) {
@@ -134,10 +130,6 @@ public class PhieuMuonController {
         PhieuMuon phieu = database.layPhieuMuonTheoId(id);
 
         if (phieu != null) {
-            Long idNguoi = phieu.getNguoiDungId();
-            String tenNguoi = phieu.getTenNguoiMuon();
-
-            // ✅ Cập nhật lại trạng thái sách trước khi xoá phiếu
             for (Sach s : sachDatabase.layDanhSachSach()) {
                 if (s.getTen().equalsIgnoreCase(phieu.getTenSach()) &&
                     s.getTacGia().equalsIgnoreCase(phieu.getTacGia())) {
@@ -149,8 +141,6 @@ public class PhieuMuonController {
 
             database.xoaPhieuMuon(id);
 
-            redirect.addFlashAttribute("tenNguoiMoi", tenNguoi);
-            redirect.addFlashAttribute("idNguoiMoi", String.valueOf(idNguoi));
             redirect.addFlashAttribute("thongBao", "✅ Đã xoá phiếu mượn!");
             redirect.addFlashAttribute("thanhCong", true);
         }
@@ -168,4 +158,4 @@ public class PhieuMuonController {
 
         return "thongtin_nguoidung";
     }
-}
+}    
